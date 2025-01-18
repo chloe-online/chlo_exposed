@@ -11,7 +11,7 @@
 
   // Create grid with week numbers
   const grid = Array.from({ length: 52 }, (_, index) => {
-    const row = Math.floor(index / GRID_SIZE);
+    const row = 7 - Math.floor(index / GRID_SIZE);
     const col = index % GRID_SIZE;
     const weekNumber = index + 1;
     return { index, row, col, weekNumber };
@@ -102,6 +102,9 @@
           class="square"
           class:has-entries={hasEntries(square.weekNumber).hasEntry}
           class:has-comment={hasEntries(square.weekNumber).hasComment}
+          class:selected={$selectedWeek &&
+            $selectedWeek.week === square.weekNumber &&
+            $selectedWeek.year === year}
           style="{getSquareStyle(square)} --opacity: {hasEntries(
             square.weekNumber
           ).opacity};"
@@ -142,7 +145,7 @@
     width: 15px;
     height: 15px;
     transition: all 0.5s ease;
-    transform-origin: top left;
+    transform-origin: bottom left;
   }
 
   .grid.expanded {
@@ -179,7 +182,7 @@
     height: 50%;
     border-radius: 50%;
     background-color: white;
-    opacity: var(--opacity);
+    opacity: 1;
   }
 
   /* Show first square at full opacity when not expanded */
@@ -191,5 +194,10 @@
   .grid.fully-expanded .square:hover {
     transform: translate(var(--x, 0), var(--y, 0)) scale(1.2);
     z-index: 2;
+  }
+
+  .square.selected {
+    background-color: var(--selected-color);
+    z-index: 1;
   }
 </style>

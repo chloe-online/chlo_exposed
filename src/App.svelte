@@ -86,9 +86,9 @@
     {#if loading}
       <p>Loading calendars...</p>
     {:else}
-      <Calendar id="cal2023" year={2023} {entries} />
-      <Calendar id="cal2024" year={2024} {entries} />
       <Calendar id="cal2025" year={2025} {entries} />
+      <Calendar id="cal2024" year={2024} {entries} />
+      <Calendar id="cal2023" year={2023} {entries} />
     {/if}
   </div>
   <div class="content">
@@ -107,6 +107,7 @@
     --text-color: #333333;
     --accent-color: #333333;
     --square-color: #a89996;
+    --selected-color: #ff3e00;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -115,6 +116,7 @@
       --text-color: #ffffff;
       --square-color: #f0f0f0;
       --accent-color: #333333;
+      --selected-color: #ff3e00;
     }
   }
 
