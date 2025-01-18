@@ -1,0 +1,170 @@
+<script>
+  import { selectedWeek } from "./stores.js";
+  import { getWeekNumber } from "./utils.js";
+  export let year;
+  export let id;
+  export let entries;
+
+  const GRID_SIZE = 7;
+  const SQUARE_SIZE = 15;
+  const GAP = 5;
+
+  // Create grid with week numbers
+  const grid = Array.from({ length: 52 }, (_, index) => {
+    const row = Math.floor(index / GRID_SIZE);
+    const col = index % GRID_SIZE;
+    const weekNumber = index + 1;
+    return { index, row, col, weekNumber };
+  });
+
+  // Function to check if a square has entries
+  function hasEntries(weekNumber) {
+    const entriesForWeek = entries.filter((entry) => {
+      if (!entry || !entry.date) {
+        console.warn("Invalid entry:", entry);
+        return false;
+      }
+      const entryWeek = getWeekNumber(entry.date);
+      const entryYear = entry.date.getFullYear();
+      return entryWeek === weekNumber && entryYear === year;
+    });
+
+    if (entriesForWeek.length === 0) return { hasEntry: false, opacity: 0.2 };
+
+    // Find the entry with the minimum distance from Thursday
+    const minDistance = Math.min(
+      ...entriesForWeek.map((entry) => getDayDistanceFromThursday(entry.date))
+    );
+
+    // Calculate opacity: 1 for Thursday (distance 0), 0.4 for furthest day (distance 3)
+    const opacity = 1 - minDistance * 0.2;
+
+    return { hasEntry: true, opacity };
+  }
+
+  function handleSquareClick(weekNumber) {
+    $selectedWeek = { year, week: weekNumber };
+  }
+
+  let isGridHovered = false;
+  let isFullyExpanded = false;
+
+  function handleGridEnter() {
+    isGridHovered = true;
+    setTimeout(() => {
+      if (isGridHovered) isFullyExpanded = true;
+    }, 500);
+  }
+
+  function handleGridLeave() {
+    isGridHovered = false;
+    isFullyExpanded = false;
+  }
+
+  $: getSquareStyle = (square) => {
+    const x = isGridHovered ? square.col * (SQUARE_SIZE + GAP) : 0;
+    const y = isGridHovered ? square.row * (SQUARE_SIZE + GAP) : 0;
+    return `--x: ${x}px; --y: ${y}px;`;
+  };
+
+  function getDayDistanceFromThursday(date) {
+    const day = date.getDay();
+    const thursday = 4; // 0 is Sunday, 4 is Thursday
+    const distance = Math.abs(day - thursday);
+    return Math.min(distance, 7 - distance); // Get shortest distance considering week wrapping
+  }
+</script>
+
+<div class="Calendar">
+  <div class="sidebar">
+    <div class="year">{year}</div>
+  </div>
+  <div class="grid-container">
+    <div
+      class="grid"
+      on:mouseenter={handleGridEnter}
+      on:mouseleave={handleGridLeave}
+      class:expanded={isGridHovered}
+      class:fully-expanded={isFullyExpanded}
+    >
+      {#each grid as square (square.index)}
+        <div
+          class="square"
+          class:has-entries={hasEntries(square.weekNumber).hasEntry}
+          style="{getSquareStyle(square)} --opacity: {hasEntries(
+            square.weekNumber
+          ).opacity};"
+          data-week={square.weekNumber}
+          data-has-entries={hasEntries(square.weekNumber).hasEntry}
+          on:click={() => handleSquareClick(square.weekNumber)}
+        ></div>
+      {/each}
+    </div>
+  </div>
+</div>
+
+<style>
+  .Calendar {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    align-items: start;
+    font-size: 1.5em;
+    padding: 1em;
+    color: var(--text-color);
+  }
+
+  .year {
+    font-style: italic;
+    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+  }
+
+  .grid-container {
+    width: 100%;
+    display: flex;
+  }
+
+  .grid {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    transition: all 0.5s ease;
+    transform-origin: top left;
+  }
+
+  .grid.expanded {
+    width: 140px;
+    height: 140px;
+  }
+
+  .square {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--square-color);
+    width: 15px;
+    height: 15px;
+    transition: all 0.5s ease;
+    opacity: 0.2;
+    transform: translate(var(--x, 0), var(--y, 0));
+    cursor: pointer;
+  }
+
+  /* Update the has-entries class to use the calculated opacity */
+  .square.has-entries {
+    opacity: var(--opacity) !important;
+    background-color: var(--accent-color, #ff3e00);
+  }
+
+  /* Show first square at full opacity when not expanded */
+  .grid:not(.expanded) .square:first-child {
+    opacity: 1;
+  }
+
+  /* Hover effect for fully expanded state */
+  .grid.fully-expanded .square:hover {
+    transform: translate(var(--x, 0), var(--y, 0)) scale(1.2);
+    z-index: 2;
+  }
+</style>
