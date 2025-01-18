@@ -86,9 +86,9 @@
     {#if loading}
       <p>Loading calendars...</p>
     {:else}
-      <Calendar id="cal2025" year={2025} {entries} />
-      <Calendar id="cal2024" year={2024} {entries} />
       <Calendar id="cal2023" year={2023} {entries} />
+      <Calendar id="cal2024" year={2024} {entries} />
+      <Calendar id="cal2025" year={2025} {entries} />
     {/if}
   </div>
   <div class="content">

@@ -29,21 +29,29 @@
       return entryWeek === weekNumber && entryYear === year;
     });
 
-    if (entriesForWeek.length === 0) return { hasEntry: false, opacity: 0.2 };
+    if (entriesForWeek.length === 0)
+      return { hasEntry: false, opacity: 0.2, hasComment: false };
+
+    // Check if any entries have comments
+    const hasComment = entriesForWeek.some(
+      (entry) => entry.comment.trim() !== ""
+    );
 
     // Find the entry with the minimum distance from Thursday
     const minDistance = Math.min(
       ...entriesForWeek.map((entry) => getDayDistanceFromThursday(entry.date))
     );
 
-    // Calculate opacity: 1 for Thursday (distance 0), 0.4 for furthest day (distance 3)
-    const opacity = 1 - minDistance * 0.2;
+    const opacity = 1 - minDistance * 0.3;
 
-    return { hasEntry: true, opacity };
+    return { hasEntry: true, opacity, hasComment };
   }
 
   function handleSquareClick(weekNumber) {
-    $selectedWeek = { year, week: weekNumber };
+    const { hasEntry } = hasEntries(weekNumber);
+    if (hasEntry) {
+      $selectedWeek = { year, week: weekNumber };
+    }
   }
 
   let isGridHovered = false;
@@ -75,15 +83,17 @@
   }
 </script>
 
-<div class="Calendar">
+<div
+  class="Calendar"
+  on:mouseenter={handleGridEnter}
+  on:mouseleave={handleGridLeave}
+>
   <div class="sidebar">
     <div class="year">{year}</div>
   </div>
   <div class="grid-container">
     <div
       class="grid"
-      on:mouseenter={handleGridEnter}
-      on:mouseleave={handleGridLeave}
       class:expanded={isGridHovered}
       class:fully-expanded={isFullyExpanded}
     >
@@ -91,6 +101,7 @@
         <div
           class="square"
           class:has-entries={hasEntries(square.weekNumber).hasEntry}
+          class:has-comment={hasEntries(square.weekNumber).hasComment}
           style="{getSquareStyle(square)} --opacity: {hasEntries(
             square.weekNumber
           ).opacity};"
@@ -113,6 +124,7 @@
     font-size: 1.5em;
     padding: 1em;
     color: var(--text-color);
+    cursor: default;
   }
 
   .year {
@@ -148,13 +160,26 @@
     transition: all 0.5s ease;
     opacity: 0.2;
     transform: translate(var(--x, 0), var(--y, 0));
-    cursor: pointer;
+    cursor: default;
   }
 
-  /* Update the has-entries class to use the calculated opacity */
   .square.has-entries {
     opacity: var(--opacity) !important;
     background-color: var(--accent-color, #ff3e00);
+    cursor: pointer;
+  }
+
+  .square.has-entries.has-comment::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background-color: white;
+    opacity: var(--opacity);
   }
 
   /* Show first square at full opacity when not expanded */
