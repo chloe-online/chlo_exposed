@@ -44,6 +44,8 @@
 
   let entries = []; // Initialize entries as empty array
   let loading = true; // Add loading state
+  let scrollDelta = 0; // Accumulate scroll delta
+  const SCROLL_THRESHOLD = 100; // Define a threshold for scroll
 
   onMount(async () => {
     try {
@@ -69,6 +71,88 @@
     }
   });
 
+  function handleKeyDown(event) {
+    if (!$selectedWeek) return;
+
+    let { week, year } = $selectedWeek;
+
+    if (event.key === "ArrowUp") {
+      if (
+        year < entries[0].date.getFullYear() ||
+        (year === entries[0].date.getFullYear() &&
+          week < getWeekNumber(entries[0].date))
+      ) {
+        week += 1;
+        if (week > 52) {
+          week = 1;
+          year += 1;
+        }
+      }
+    } else if (event.key === "ArrowDown") {
+      if (
+        year > entries[entries.length - 1].date.getFullYear() ||
+        (year === entries[entries.length - 1].date.getFullYear() &&
+          week > getWeekNumber(entries[entries.length - 1].date))
+      ) {
+        week -= 1;
+        if (week < 1) {
+          week = 52;
+          year -= 1;
+        }
+      }
+    }
+
+    selectedWeek.set({ year, week });
+  }
+
+  function handleScroll(event) {
+    if (!$selectedWeek) return;
+
+    scrollDelta += event.deltaY;
+
+    if (Math.abs(scrollDelta) >= SCROLL_THRESHOLD) {
+      let { week, year } = $selectedWeek;
+
+      if (scrollDelta < 0) {
+        // Scrolling up
+        if (
+          year < entries[0].date.getFullYear() ||
+          (year === entries[0].date.getFullYear() &&
+            week < getWeekNumber(entries[0].date))
+        ) {
+          week += 1;
+          if (week > 52) {
+            week = 1;
+            year += 1;
+          }
+        }
+      } else if (scrollDelta > 0) {
+        // Scrolling down
+        if (
+          year > entries[entries.length - 1].date.getFullYear() ||
+          (year === entries[entries.length - 1].date.getFullYear() &&
+            week > getWeekNumber(entries[entries.length - 1].date))
+        ) {
+          week -= 1;
+          if (week < 1) {
+            week = 52;
+            year -= 1;
+          }
+        }
+      }
+
+      selectedWeek.set({ year, week });
+      scrollDelta = 0; // Reset scroll delta after changing the week
+    }
+  }
+
+  onMount(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
   $: filteredEntries = $selectedWeek
     ? entries.filter((entry) => {
         const entryWeek = getWeekNumber(entry.date);
@@ -91,7 +175,7 @@
       <Calendar id="cal2023" year={2023} {entries} />
     {/if}
   </div>
-  <div class="content">
+  <div class="content" on:wheel={handleScroll}>
     {#each filteredEntries as entry}
       <div class="entry">
         <h1>{entry.date.toLocaleDateString()} - {entry.site}</h1>
@@ -107,7 +191,7 @@
     --text-color: #333333;
     --accent-color: #333333;
     --square-color: #a89996;
-    --selected-color: #ff3e00;
+    --selected-color: white;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -159,6 +243,7 @@
     flex-direction: column;
     width: 100%;
     min-height: 100%;
+    transition: transform 0.3s ease; /* Add transition for smooth animation */
   }
 
   .entry {

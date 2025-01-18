@@ -146,11 +146,13 @@
     height: 15px;
     transition: all 0.5s ease;
     transform-origin: bottom left;
+    background-color: var(--square-color);
   }
 
   .grid.expanded {
     width: 140px;
     height: 140px;
+    background-color: transparent;
   }
 
   .square {
@@ -185,12 +187,18 @@
     opacity: 1;
   }
 
-  /* Show first square at full opacity when not expanded */
+  .grid:not(.expanded) .square.has-entries.has-comment::after {
+    display: none;
+  }
+
+  .grid:not(.expanded) .square.has-entries.selected::after {
+    display: block;
+  }
+
   .grid:not(.expanded) .square:first-child {
     opacity: 1;
   }
 
-  /* Hover effect for fully expanded state */
   .grid.fully-expanded .square:hover {
     transform: translate(var(--x, 0), var(--y, 0)) scale(1.2);
     z-index: 2;
@@ -198,6 +206,21 @@
 
   .square.selected {
     background-color: var(--selected-color);
+    border: 1px dashed var(--accent-color);
+    opacity: 1;
     z-index: 1;
+  }
+
+  .square.has-entries.has-comment.selected::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    opacity: 1;
   }
 </style>

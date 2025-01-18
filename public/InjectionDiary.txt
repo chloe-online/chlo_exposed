@@ -196,7 +196,7 @@
 <div><br></div>
 <div>12/29/23</div>
 <div>left mid</div>
-<div>(day late :()</div>
+<div>day late :(</div>
 <div><br></div>
 <div>12/21/23</div>
 <div>right bottom</div>
@@ -221,17 +221,21 @@
 <div><br></div>
 <div>11/2/23</div>
 <div>left bottom</div>
-<div>(back in schedule)</div>
+<div>back in schedule</div>
 <div><br></div>
 <div>10/27/23</div>
 <div>right top</div>
-<div>(day late)</div>
+<div>day late</div>
 <div><br></div>
 <div>10/19/23</div>
 <div>left top</div>
 <div><br></div>
 <div>10/12/23</div>
 <div>right middle</div>
+<div><br></div>
+<div>10/5/23</div>
+<div>left middle</div>
+<div>this was left blank for some reason, maybe this entry got lost. but ive never missed a week i dont think so this definitely happened. noticed this was missing 1/18/25 while updating my site :P</div>
 <div><br></div>
 <div>9/28/23</div>
 <div>right bottom</div>
@@ -244,7 +248,7 @@
 <div><br></div>
 <div>9/7/23</div>
 <div>left top</div>
-<div>(ouch)</div>
+<div>ouch</div>
 <div><br></div>
 <div>8/31/23</div>
 <div>right middle</div>
