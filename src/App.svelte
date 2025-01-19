@@ -45,7 +45,7 @@
   let entries = []; // Initialize entries as empty array
   let loading = true; // Add loading state
   let scrollDelta = 0; // Accumulate scroll delta
-  const SCROLL_THRESHOLD = 100; // Define a threshold for scroll
+  const SCROLL_THRESHOLD = 200; // Define a threshold for scroll
 
   onMount(async () => {
     try {
@@ -77,28 +77,16 @@
     let { week, year } = $selectedWeek;
 
     if (event.key === "ArrowUp") {
-      if (
-        year < entries[0].date.getFullYear() ||
-        (year === entries[0].date.getFullYear() &&
-          week < getWeekNumber(entries[0].date))
-      ) {
-        week += 1;
-        if (week > 52) {
-          week = 1;
-          year += 1;
-        }
+      week += 1;
+      if (week > 52) {
+        week = 1;
+        year += 1;
       }
     } else if (event.key === "ArrowDown") {
-      if (
-        year > entries[entries.length - 1].date.getFullYear() ||
-        (year === entries[entries.length - 1].date.getFullYear() &&
-          week > getWeekNumber(entries[entries.length - 1].date))
-      ) {
-        week -= 1;
-        if (week < 1) {
-          week = 52;
-          year -= 1;
-        }
+      week -= 1;
+      if (week < 1) {
+        week = 52;
+        year -= 1;
       }
     }
 
@@ -116,40 +104,79 @@
       if (scrollDelta < 0) {
         // Scrolling up
         if (
-          year < entries[0].date.getFullYear() ||
-          (year === entries[0].date.getFullYear() &&
-            week < getWeekNumber(entries[0].date))
+          !(
+            year === entries[0].date.getFullYear() &&
+            week === getWeekNumber(entries[0].date)
+          )
         ) {
           week += 1;
           if (week > 52) {
             week = 1;
             year += 1;
           }
+          scrollDelta = 0; // Only reset when actually changing weeks
         }
       } else if (scrollDelta > 0) {
         // Scrolling down
         if (
-          year > entries[entries.length - 1].date.getFullYear() ||
-          (year === entries[entries.length - 1].date.getFullYear() &&
-            week > getWeekNumber(entries[entries.length - 1].date))
+          !(
+            year === entries[entries.length - 1].date.getFullYear() &&
+            week === getWeekNumber(entries[entries.length - 1].date)
+          )
         ) {
           week -= 1;
           if (week < 1) {
             week = 52;
             year -= 1;
           }
+          scrollDelta = 0; // Only reset when actually changing weeks
         }
       }
 
       selectedWeek.set({ year, week });
-      scrollDelta = 0; // Reset scroll delta after changing the week
     }
+  }
+
+  $: transformValue = (entry) => {
+    let scrollAmount = -(scrollDelta / SCROLL_THRESHOLD) * 20;
+
+    // Check if we're at boundaries
+    const isAtFirst =
+      $selectedWeek.year === entries[0].date.getFullYear() &&
+      $selectedWeek.week === getWeekNumber(entries[0].date);
+    const isAtLast =
+      $selectedWeek.year === entries[entries.length - 1].date.getFullYear() &&
+      $selectedWeek.week === getWeekNumber(entries[entries.length - 1].date);
+
+    // Apply exponential dampening at boundaries
+    if (isAtFirst && scrollDelta < 0) {
+      scrollAmount = -(Math.abs(scrollDelta / SCROLL_THRESHOLD) ** 0.5) * 10;
+    } else if (isAtLast && scrollDelta > 0) {
+      scrollAmount = Math.abs(scrollDelta / SCROLL_THRESHOLD) ** 0.5 * 10;
+    }
+
+    return `translateY(${scrollAmount}px)`;
+  };
+
+  // Add wheel end detection
+  let wheelTimeout;
+  function handleWheel(event) {
+    // Clear existing timeout
+    clearTimeout(wheelTimeout);
+
+    handleScroll(event);
+
+    // Set new timeout
+    wheelTimeout = setTimeout(() => {
+      scrollDelta = 0; // Reset scroll delta when wheel stops
+    }, 100); // Reduced from 150ms to 100ms
   }
 
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      clearTimeout(wheelTimeout);
     };
   });
 
@@ -170,18 +197,24 @@
     {#if loading}
       <p>Loading calendars...</p>
     {:else}
-      <Calendar id="cal2025" year={2025} {entries} />
-      <Calendar id="cal2024" year={2024} {entries} />
-      <Calendar id="cal2023" year={2023} {entries} />
+      {#each [2025, 2024, 2023] as year}
+        <Calendar id={`cal${year}`} {year} {entries} />
+      {/each}
     {/if}
   </div>
-  <div class="content" on:wheel={handleScroll}>
-    {#each filteredEntries as entry}
-      <div class="entry">
-        <h1>{entry.date.toLocaleDateString()} - {entry.site}</h1>
-        <p>{entry.comment}</p>
-      </div>
-    {/each}
+  <div class="content">
+    <div class="entry-container" on:wheel={handleWheel}>
+      {#each filteredEntries as entry}
+        <div class="entry" style="transform: {transformValue(entry)};">
+          <h1>
+            {entry.date.toLocaleDateString("en-US", { weekday: "long" })}
+            {entry.date.toLocaleDateString()}
+            - {entry.site}
+          </h1>
+          <p>{entry.comment}</p>
+        </div>
+      {/each}
+    </div>
   </div>
 </main>
 
@@ -229,30 +262,45 @@
   .calendar-container {
     flex: 0 0 auto;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
     padding: 1em;
+    padding-top: 3em;
     overflow: hidden;
   }
 
   .content {
     flex: 1;
     padding: 2em;
-    overflow-y: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     width: 100%;
     min-height: 100%;
-    transition: transform 0.3s ease; /* Add transition for smooth animation */
+    position: relative;
+  }
+
+  .entry-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-top: 2em;
   }
 
   .entry {
     width: 400px;
     padding: 2em;
     margin: 0;
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
+    transform: translateY(0);
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    transform-origin: top center;
   }
 
   .entry h1 {
