@@ -108,9 +108,7 @@
   on:mouseenter={handleGridEnter}
   on:mouseleave={handleGridLeave}
 >
-  <div class="sidebar">
-    <div class="year">{year}</div>
-  </div>
+  <div class="year-display">{year}</div>
   <div class="grid-container">
     <div
       class="grid"
@@ -147,21 +145,19 @@
     flex-direction: row;
     gap: 10px;
     width: 100%;
-    align-items: start;
+    align-items: flex-end;
     font-size: 1.5em;
     padding: 1em;
     color: var(--text-color);
     cursor: default;
   }
 
-  .year {
-    font-style: italic;
-    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
-  }
-
   .grid-container {
-    width: 100%;
+    position: relative;
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 10px;
   }
 
   .grid {
@@ -250,5 +246,16 @@
     border-radius: 50%;
     background-color: var(--accent-color);
     opacity: 1;
+  }
+
+  .year-display {
+    display: flex;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1.5em;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    font-style: italic;
+    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
   }
 </style>
