@@ -94,69 +94,6 @@
     selectedWeek.set({ year, week });
   }
 
-  function handleScroll(event) {
-    if (!$selectedWeek || entries.length === 0) return;
-
-    scrollDelta += event.deltaY;
-
-    // Determine the first and last weeks in the entries
-    const firstEntry = entries[entries.length - 1];
-    const lastEntry = entries[0];
-    const firstWeek = getWeekNumber(firstEntry.date);
-    const firstYear = firstEntry.date.getFullYear();
-    const lastWeek = getWeekNumber(lastEntry.date);
-    const lastYear = lastEntry.date.getFullYear();
-
-    if (Math.abs(scrollDelta) >= SCROLL_THRESHOLD) {
-      let { week, year } = $selectedWeek;
-
-      if (scrollDelta < 0) {
-        // Scrolling up
-        do {
-          week += 1;
-          if (week > 52) {
-            week = 1;
-            year += 1;
-          }
-          // Stop if we reach the last available week
-          if (year > lastYear || (year === lastYear && week > lastWeek)) {
-            scrollDelta = 0;
-            return;
-          }
-        } while (
-          !entries.some((entry) => {
-            const entryWeek = getWeekNumber(entry.date);
-            const entryYear = entry.date.getFullYear();
-            return entryWeek === week && entryYear === year;
-          })
-        );
-      } else if (scrollDelta > 0) {
-        // Scrolling down
-        do {
-          week -= 1;
-          if (week < 1) {
-            week = 52;
-            year -= 1;
-          }
-          // Stop if we reach the first available week
-          if (year < firstYear || (year === firstYear && week < firstWeek)) {
-            scrollDelta = 0;
-            return;
-          }
-        } while (
-          !entries.some((entry) => {
-            const entryWeek = getWeekNumber(entry.date);
-            const entryYear = entry.date.getFullYear();
-            return entryWeek === week && entryYear === year;
-          })
-        );
-      }
-
-      selectedWeek.set({ year, week });
-      scrollDelta = 0; // Reset scrollDelta immediately after changing weeks
-    }
-  }
-
   $: transformValue = (entry) => {
     let scrollAmount = -(scrollDelta / SCROLL_THRESHOLD) * 20;
 
@@ -177,20 +114,6 @@
 
     return `translateY(${scrollAmount}px)`;
   };
-
-  //   function handleWheel(event) {
-  //     isScrolling = true;
-  //     lastChangeWasScroll = true;
-  //     clearTimeout(wheelTimeout);
-
-  //     // handleScroll(event);
-
-  //     wheelTimeout = setTimeout(() => {
-  //       scrollDelta = 0;
-  //       isScrolling = false;
-  //       lastChangeWasScroll = false;
-  //     }, 100);
-  //   }
 
   function handleCalendarClick() {
     lastChangeWasScroll = false;
