@@ -6,6 +6,16 @@
   import Entry from "./Entry.svelte"; // Import the Entry component
   import { fade } from "svelte/transition";
   import type { Entry } from "./Entry.svelte";
+  import About from "./About.svelte";
+  import { showAbout } from "./stores.ts";
+
+  function handleAboutClick() {
+    $showAbout = true;
+  }
+
+  function closeAbout() {
+    $showAbout = false;
+  }
 
   let entries: Entry[] = []; // Initialize entries as empty array
   let loading = true; // Add loading state
@@ -42,6 +52,7 @@
   function incrementDate() {}
 
   function handleKeyDown(event) {
+    $showAbout = false;
     if (!$selectedWeek || entries.length === 0) return;
 
     let { week, year } = $selectedWeek;
@@ -143,7 +154,7 @@
 
 <main>
   <div class="container">
-    <button class="about-button">About</button>
+    <button class="about-button" on:click={handleAboutClick}>About</button>
     <div class="calendar-container">
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
@@ -160,27 +171,31 @@
     <div class="content">
       <!-- <div class="entry-container" on:wheel={handleWheel}> -->
       <div class="entry-container">
-        {#each filteredEntries as entry (entry.date.getTime())}
-          <div class:no-transition={isScrolling}>
-            {#if !lastChangeWasScroll}
-              <div in:fade={{ duration: 300 }}>
+        {#if $showAbout}
+          <About on:close={closeAbout} />
+        {:else}
+          {#each filteredEntries as entry (entry.date.getTime())}
+            <div class:no-transition={isScrolling}>
+              {#if !lastChangeWasScroll}
+                <div in:fade={{ duration: 300 }}>
+                  <Entry
+                    date={entry.date}
+                    site={entry.site}
+                    comment={entry.comment}
+                    {transformValue}
+                  />
+                </div>
+              {:else}
                 <Entry
                   date={entry.date}
                   site={entry.site}
                   comment={entry.comment}
                   {transformValue}
                 />
-              </div>
-            {:else}
-              <Entry
-                date={entry.date}
-                site={entry.site}
-                comment={entry.comment}
-                {transformValue}
-              />
-            {/if}
-          </div>
-        {/each}
+              {/if}
+            </div>
+          {/each}
+        {/if}
       </div>
     </div>
   </div>
