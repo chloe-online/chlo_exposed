@@ -1,5 +1,3 @@
-import { Entry } from "./Entry.svelte";
-
 export function getWeekNumber(date) {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
   const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
@@ -35,7 +33,7 @@ export async function parseDiaryEntries(text) {
         .map((line) => line.replace("<div>", "").replace("</div>", ""))
         .join(" ")
         .trim();
-      return new Entry(date, site, comment);
+      return { date, site, comment };
     });
 
   return entries;

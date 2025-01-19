@@ -1,13 +1,23 @@
 <script>
   import { selectedWeek } from "./stores.js";
   import { getWeekNumber } from "./utils.js";
+
   export let year;
   export let id;
   export let entries;
 
   const GRID_SIZE = 7;
-  const SQUARE_SIZE = 15;
+  const SQUARE_SIZE = 30;
   const GAP = 5;
+
+  const colorPalette = {
+    "bottom left": "#fbb4ae",
+    "bottom right": "#b3cde3",
+    "middle left": "#ccebc5",
+    "middle right": "#decbe4",
+    "top left": "#fed9a6",
+    "top right": "#ffffcc",
+  };
 
   // Create grid with week numbers
   const grid = Array.from({ length: 52 }, (_, index) => {
@@ -30,7 +40,12 @@
     });
 
     if (entriesForWeek.length === 0)
-      return { hasEntry: false, opacity: 0.2, hasComment: false };
+      return {
+        hasEntry: false,
+        dotSpacing: "0",
+        hasComment: false,
+        color: null,
+      };
 
     // Check if any entries have comments
     const hasComment = entriesForWeek.some(
@@ -42,9 +57,14 @@
       ...entriesForWeek.map((entry) => getDayDistanceFromThursday(entry.date))
     );
 
-    const opacity = 1 - minDistance * 0.3;
+    // Calculate dot spacing based on distance (0 = dense, 3 = sparse)
+    const dotSpacing = 2 + minDistance * 2;
 
-    return { hasEntry: true, opacity, hasComment };
+    // Determine color based on the site of the first entry
+    const site = entriesForWeek[0].site.toLowerCase();
+    const color = colorPalette[site] || "var(--square-color)";
+
+    return { hasEntry: true, dotSpacing, hasComment, color };
   }
 
   function handleSquareClick(weekNumber) {
@@ -69,9 +89,9 @@
     isFullyExpanded = false;
   }
 
-  $: getSquareStyle = (square) => {
-    const x = isGridHovered ? square.col * (SQUARE_SIZE + GAP) : 0;
-    const y = isGridHovered ? square.row * (SQUARE_SIZE + GAP) : 0;
+  $: getSquareStyle = (weekIcon) => {
+    const x = isGridHovered ? weekIcon.col * (SQUARE_SIZE + GAP) : 0;
+    const y = isGridHovered ? weekIcon.row * (SQUARE_SIZE + GAP) : 0;
     return `--x: ${x}px; --y: ${y}px;`;
   };
 
@@ -97,22 +117,26 @@
       class:expanded={isGridHovered}
       class:fully-expanded={isFullyExpanded}
     >
-      {#each grid as square (square.index)}
-        <div
-          class="square"
-          class:has-entries={hasEntries(square.weekNumber).hasEntry}
-          class:has-comment={hasEntries(square.weekNumber).hasComment}
-          class:selected={$selectedWeek &&
-            $selectedWeek.week === square.weekNumber &&
-            $selectedWeek.year === year}
-          style="{getSquareStyle(square)} --opacity: {hasEntries(
-            square.weekNumber
-          ).opacity};"
-          data-week={square.weekNumber}
-          data-has-entries={hasEntries(square.weekNumber).hasEntry}
-          on:click={() => handleSquareClick(square.weekNumber)}
-        ></div>
-      {/each}
+      <div class="week-icons">
+        {#each grid as weekIcon (weekIcon.index)}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div
+            class="square"
+            class:has-entries={hasEntries(weekIcon.weekNumber).hasEntry}
+            class:has-comment={hasEntries(weekIcon.weekNumber).hasComment}
+            class:selected={$selectedWeek &&
+              $selectedWeek.week === weekIcon.weekNumber &&
+              $selectedWeek.year === year}
+            style="{getSquareStyle(weekIcon)} --dot-spacing: {hasEntries(
+              weekIcon.weekNumber
+            ).dotSpacing}px; --dot-color: {hasEntries(weekIcon.weekNumber)
+              .color};"
+            data-week={weekIcon.weekNumber}
+            data-has-entries={hasEntries(weekIcon.weekNumber).hasEntry}
+            on:click={() => handleSquareClick(weekIcon.weekNumber)}
+          ></div>
+        {/each}
+      </div>
     </div>
   </div>
 </div>
@@ -142,35 +166,37 @@
 
   .grid {
     position: relative;
-    width: 15px;
-    height: 15px;
+    width: 30px;
+    height: 30px;
     transition: all 0.5s ease;
     transform-origin: bottom left;
-    background-color: var(--square-color);
   }
 
   .grid.expanded {
-    width: 140px;
-    height: 140px;
-    background-color: transparent;
+    width: 245px;
+    height: 245px;
   }
 
   .square {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: var(--square-color);
-    width: 15px;
-    height: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     transition: all 0.5s ease;
-    opacity: 0.2;
     transform: translate(var(--x, 0), var(--y, 0));
     cursor: default;
+    background-color: transparent;
+    background-image: radial-gradient(
+      circle at center,
+      var(--dot-color, var(--square-color)) 1px,
+      transparent 1px
+    );
+    background-size: var(--dot-spacing, 4px) var(--dot-spacing, 4px);
   }
 
   .square.has-entries {
-    opacity: var(--opacity) !important;
-    background-color: var(--accent-color, #ff3e00);
     cursor: pointer;
   }
 

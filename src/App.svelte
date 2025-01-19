@@ -3,6 +3,7 @@
   import Calendar from "./Calendar.svelte";
   import { selectedWeek } from "./stores.js";
   import { getWeekNumber, parseDiaryEntries } from "./utils.js";
+  import Entry from "./Entry.svelte"; // Import the Entry component
 
   let entries = []; // Initialize entries as empty array
   let loading = true; // Add loading state
@@ -170,7 +171,7 @@
 </script>
 
 <main>
-  <div class="sidebar"></div>
+  <!-- <div class="sidebar"></div> -->
   <div class="calendar-container">
     {#if loading}
       <p>Loading calendars...</p>
@@ -180,17 +181,16 @@
       {/each}
     {/if}
   </div>
+
   <div class="content">
     <div class="entry-container" on:wheel={handleWheel}>
       {#each filteredEntries as entry}
-        <div class="entry" style="transform: {transformValue(entry)};">
-          <h1>
-            {entry.date.toLocaleDateString("en-US", { weekday: "long" })}
-            {entry.date.toLocaleDateString()}
-            - {entry.site}
-          </h1>
-          <p>{entry.comment}</p>
-        </div>
+        <Entry
+          date={entry.date}
+          site={entry.site}
+          comment={entry.comment}
+          {transformValue}
+        />
       {/each}
     </div>
   </div>
@@ -234,7 +234,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-right: 1px solid #333;
+    border-left: 1px solid #333;
   }
 
   .calendar-container {
@@ -245,6 +245,7 @@
     padding: 1em;
     padding-top: 3em;
     overflow: hidden;
+    border-right: 1px solid #333;
   }
 
   .content {
@@ -269,23 +270,5 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding-top: 2em;
-  }
-
-  .entry {
-    width: 400px;
-    padding: 2em;
-    margin: 0;
-    position: relative;
-    transform: translateY(0);
-    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
-    transform-origin: top center;
-  }
-
-  .entry h1 {
-    font-style: italic;
-    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
-    font-size: 2em;
-    font-weight: 100;
-    margin-bottom: 1em;
   }
 </style>
