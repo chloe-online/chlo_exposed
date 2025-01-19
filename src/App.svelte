@@ -41,79 +41,117 @@
   function incrementDate() {}
 
   function handleKeyDown(event) {
-    if (!$selectedWeek) return;
+    if (!$selectedWeek || entries.length === 0) return;
 
     let { week, year } = $selectedWeek;
 
+    // Determine the first and last weeks in the entries
+    const firstEntry = entries[entries.length - 1];
+    const lastEntry = entries[0];
+    const firstWeek = getWeekNumber(firstEntry.date);
+    const firstYear = firstEntry.date.getFullYear();
+    const lastWeek = getWeekNumber(lastEntry.date);
+    const lastYear = lastEntry.date.getFullYear();
+
     if (event.key === "ArrowUp") {
-      if (
-        !(
-          year === entries[0].date.getFullYear() &&
-          week === getWeekNumber(entries[0].date)
-        )
-      ) {
+      do {
         week += 1;
         if (week > 52) {
           week = 1;
           year += 1;
         }
-      }
+        // Stop if we reach the last available week
+        if (year > lastYear || (year === lastYear && week > lastWeek)) {
+          return;
+        }
+      } while (
+        !entries.some((entry) => {
+          const entryWeek = getWeekNumber(entry.date);
+          const entryYear = entry.date.getFullYear();
+          return entryWeek === week && entryYear === year;
+        })
+      );
     } else if (event.key === "ArrowDown") {
-      if (
-        !(
-          year === entries[entries.length - 1].date.getFullYear() &&
-          week === getWeekNumber(entries[entries.length - 1].date)
-        )
-      ) {
+      do {
         week -= 1;
         if (week < 1) {
           week = 52;
           year -= 1;
         }
-      }
+        // Stop if we reach the first available week
+        if (year < firstYear || (year === firstYear && week < firstWeek)) {
+          return;
+        }
+      } while (
+        !entries.some((entry) => {
+          const entryWeek = getWeekNumber(entry.date);
+          const entryYear = entry.date.getFullYear();
+          return entryWeek === week && entryYear === year;
+        })
+      );
     }
 
     selectedWeek.set({ year, week });
   }
 
   function handleScroll(event) {
-    if (!$selectedWeek) return;
+    if (!$selectedWeek || entries.length === 0) return;
 
     scrollDelta += event.deltaY;
+
+    // Determine the first and last weeks in the entries
+    const firstEntry = entries[entries.length - 1];
+    const lastEntry = entries[0];
+    const firstWeek = getWeekNumber(firstEntry.date);
+    const firstYear = firstEntry.date.getFullYear();
+    const lastWeek = getWeekNumber(lastEntry.date);
+    const lastYear = lastEntry.date.getFullYear();
 
     if (Math.abs(scrollDelta) >= SCROLL_THRESHOLD) {
       let { week, year } = $selectedWeek;
 
       if (scrollDelta < 0) {
         // Scrolling up
-        if (
-          !(
-            year === entries[0].date.getFullYear() &&
-            week === getWeekNumber(entries[0].date)
-          )
-        ) {
+        do {
           week += 1;
           if (week > 52) {
             week = 1;
             year += 1;
           }
-          scrollDelta = 0; // Only reset when actually changing weeks
-        }
+          // Stop if we reach the last available week
+          if (year > lastYear || (year === lastYear && week > lastWeek)) {
+            scrollDelta = 0;
+            return;
+          }
+        } while (
+          !entries.some((entry) => {
+            const entryWeek = getWeekNumber(entry.date);
+            const entryYear = entry.date.getFullYear();
+            return entryWeek === week && entryYear === year;
+          })
+        );
+        scrollDelta = 0; // Only reset when actually changing weeks
       } else if (scrollDelta > 0) {
         // Scrolling down
-        if (
-          !(
-            year === entries[entries.length - 1].date.getFullYear() &&
-            week === getWeekNumber(entries[entries.length - 1].date)
-          )
-        ) {
+        do {
           week -= 1;
           if (week < 1) {
             week = 52;
             year -= 1;
           }
-          scrollDelta = 0; // Only reset when actually changing weeks
-        }
+          // Stop if we reach the first available week
+          if (year < firstYear || (year === firstYear && week < firstWeek)) {
+            scrollDelta = 0;
+            return;
+          }
+        } while (
+          !entries.some((entry) => {
+            const entryWeek = getWeekNumber(entry.date);
+            const entryYear = entry.date.getFullYear();
+            return entryWeek === week && entryYear === year;
+          })
+        );
+        scrollDelta = 0; // Only reset when actually changing weeks
       }
 
       selectedWeek.set({ year, week });
@@ -244,6 +282,14 @@
     }
   }
 
+  html,
+  body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   main {
     display: flex;
     justify-content: center;
@@ -254,6 +300,8 @@
     padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
+    width: 100%;
+    height: 100%;
     overflow: hidden;
   }
 
@@ -284,8 +332,7 @@
   .content {
     flex: 1;
     padding: 2em;
-    padding-top: 33vh; /* Push content down by 33vh */
-    overflow: hidden;
+    padding-top: 33vh;
     display: flex;
     flex-direction: column;
     min-height: 100%;
@@ -297,16 +344,16 @@
 
   .entry-container {
     position: absolute;
-    top: 33vh; /* Move entries down to align with calendar */
+    top: 33vh;
     left: 0;
     right: 0;
     bottom: 0;
-    overflow: hidden;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     padding-top: 2em;
     transition: top 0.3s ease-in-out;
+    overflow-y: auto; /* Allow vertical scrolling if needed */
   }
 
   @media (max-width: 1200px) {

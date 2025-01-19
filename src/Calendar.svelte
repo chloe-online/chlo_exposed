@@ -9,8 +9,8 @@
   const GRID_SIZE = 7;
   const SQUARE_SIZE = 30;
   const GAP = 5;
-  const DOT_SIZE = 15; // diameter of dots in pixels
-  const DOT_SPACING_RATE = 4; // pixels to increase per day of distance
+  const DOT_SIZE = 5; // diameter of dots in pixels
+  const DOT_SPACING_RATE = 2; // pixels to increase per day of distance
 
   // color source https://www.stencil.wiki/colors
   const colorPalette = {
