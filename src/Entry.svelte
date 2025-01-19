@@ -1,8 +1,14 @@
 <script>
+  import { onMount } from "svelte";
   export let date;
   export let site;
   export let comment;
   export let transformValue;
+
+  let dateContainer;
+  let useLongDate = true;
+
+  console.log("Date prop:", date, "Is Date?:", date instanceof Date);
 
   const colorPalette = {
     left: "#f15060", // bright red ブライトレッド
@@ -15,6 +21,27 @@
   $: [location, side] = site.split(" ");
   $: textColor = colorPalette[side];
   $: bgColor = colorPalette[location];
+
+  function checkWidth() {
+    if (dateContainer) {
+      const width = dateContainer.offsetWidth;
+      console.log("Container width:", width);
+      useLongDate = width > 250;
+    }
+  }
+
+  onMount(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      checkWidth();
+    });
+
+    if (dateContainer) {
+      resizeObserver.observe(dateContainer.parentElement);
+      checkWidth(); // Initial check
+    }
+
+    return () => resizeObserver.disconnect();
+  });
 </script>
 
 <div
@@ -22,15 +49,24 @@
   style="transform: {transformValue({ date, site, comment })};"
 >
   <div class="entry-header">
-    <div class="date">
+    <div class="date" bind:this={dateContainer}>
       <div class="star-container">
         {#if date.getDay() === 4}
           <h1>★</h1>
         {/if}
       </div>
       <h1>
-        {date.toLocaleDateString("en-US", { weekday: "long" })}
-        {date.toLocaleDateString()}
+        {#if useLongDate}
+          {date.toLocaleDateString("en-US", { weekday: "long" })} -
+          {date.toLocaleDateString()}
+        {:else}
+          {date.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "numeric",
+            day: "numeric",
+            year: "2-digit",
+          })}
+        {/if}
       </h1>
     </div>
     <div class="site">
@@ -60,7 +96,8 @@
     align-items: flex-start;
     transform-origin: top center;
     transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
-    width: 75%;
+    width: 75%; /* Default width for large screens */
+    min-width: min-content; /* Prevents squashing below content minimum width */
   }
 
   .entry-header {
@@ -70,6 +107,8 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    flex-wrap: wrap; /* Allows header items to wrap when space is tight */
+    gap: 1em; /* Adds spacing between wrapped items */
   }
 
   .site {
@@ -91,6 +130,9 @@
     justify-content: flex-start;
     text-align: center;
     gap: 0.5em;
+    max-width: 50%;
+    min-width: min-content; /* Prevents date from squashing */
+    overflow: visible; /* Ensures date text remains visible */
   }
 
   .entry h1 {
@@ -110,12 +152,14 @@
     text-align: left;
     text-wrap: balance;
     width: 100%;
-    max-width: 75%;
+    max-width: 75%; /* Default max-width for large screens */
+    overflow-wrap: break-word; /* Allows long words to break */
+    word-break: break-word; /* Additional support for word breaking */
   }
 
   .color-dots {
     display: flex;
-    gap: 1em;
+    gap: 0.6em;
   }
 
   .color-dots .location,
@@ -155,5 +199,15 @@
 
   .star-container h1 {
     margin: 0;
+  }
+
+  .date h1 {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1200px) {
+    .entry {
+      width: 100%;
+    }
   }
 </style>

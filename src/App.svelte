@@ -4,11 +4,15 @@
   import { selectedWeek } from "./stores.js";
   import { getWeekNumber, parseDiaryEntries } from "./utils.js";
   import Entry from "./Entry.svelte"; // Import the Entry component
+  import { fade } from "svelte/transition";
 
   let entries = []; // Initialize entries as empty array
   let loading = true; // Add loading state
   let scrollDelta = 0; // Accumulate scroll delta
   const SCROLL_THRESHOLD = 200; // Define a threshold for scroll
+  let isScrolling = false;
+  let lastChangeWasScroll = false;
+  let wheelTimeout;
 
   onMount(async () => {
     try {
@@ -137,18 +141,24 @@
     return `translateY(${scrollAmount}px)`;
   };
 
-  // Add wheel end detection
-  let wheelTimeout;
   function handleWheel(event) {
-    // Clear existing timeout
+    isScrolling = true;
+    lastChangeWasScroll = true;
     clearTimeout(wheelTimeout);
 
     handleScroll(event);
 
-    // Set new timeout
     wheelTimeout = setTimeout(() => {
-      scrollDelta = 0; // Reset scroll delta when wheel stops
-    }, 100); // Reduced from 150ms to 100ms
+      scrollDelta = 0;
+      isScrolling = false;
+      lastChangeWasScroll = false;
+    }, 100);
+  }
+
+  function handleCalendarClick() {
+    lastChangeWasScroll = false;
+    isScrolling = false;
+    clearTimeout(wheelTimeout);
   }
 
   onMount(() => {
@@ -171,27 +181,46 @@
 </script>
 
 <main>
-  <!-- <div class="sidebar"></div> -->
-  <div class="calendar-container">
-    {#if loading}
-      <p>Loading calendars...</p>
-    {:else}
-      {#each [2025, 2024, 2023] as year}
-        <Calendar id={`cal${year}`} {year} {entries} />
-      {/each}
-    {/if}
-  </div>
+  <div class="container">
+    <div class="calendar-container">
+      {#if loading}
+        <p>Loading calendars...</p>
+      {:else}
+        {#each [2025, 2024, 2023] as year}
+          <Calendar
+            id={`cal${year}`}
+            {year}
+            {entries}
+            on:click={handleCalendarClick}
+          />
+        {/each}
+      {/if}
+    </div>
 
-  <div class="content">
-    <div class="entry-container" on:wheel={handleWheel}>
-      {#each filteredEntries as entry}
-        <Entry
-          date={entry.date}
-          site={entry.site}
-          comment={entry.comment}
-          {transformValue}
-        />
-      {/each}
+    <div class="content">
+      <div class="entry-container" on:wheel={handleWheel}>
+        {#each filteredEntries as entry (entry.date.getTime())}
+          <div class:no-transition={isScrolling}>
+            {#if !lastChangeWasScroll}
+              <div in:fade={{ duration: 300 }}>
+                <Entry
+                  date={entry.date}
+                  site={entry.site}
+                  comment={entry.comment}
+                  {transformValue}
+                />
+              </div>
+            {:else}
+              <Entry
+                date={entry.date}
+                site={entry.site}
+                comment={entry.comment}
+                {transformValue}
+              />
+            {/if}
+          </div>
+        {/each}
+      </div>
     </div>
   </div>
 </main>
@@ -217,7 +246,8 @@
 
   main {
     display: flex;
-    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
     width: 100%;
     height: 100vh;
     margin: 0;
@@ -227,14 +257,16 @@
     overflow: hidden;
   }
 
-  .sidebar {
-    flex-shrink: 0;
-    width: 200px;
-    padding: 1em;
+  .container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-left: 1px solid #333;
+    flex-direction: row;
+    width: 100%;
+    max-width: 1200px;
+    height: 100vh;
+    gap: 4em;
+    padding: 0 2em;
+    margin: 0 auto;
+    justify-content: center;
   }
 
   .calendar-container {
@@ -243,25 +275,29 @@
     justify-content: flex-start;
     flex-direction: column;
     padding: 1em;
-    padding-top: 3em;
+    padding-top: calc(33vh + 1em); /* Reduced from 3em to 1em */
     overflow: hidden;
     border-right: 1px solid #333;
+    transition: padding-top 0.3s ease-in-out;
   }
 
   .content {
     flex: 1;
     padding: 2em;
+    padding-top: 33vh; /* Push content down by 33vh */
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    width: 100%;
     min-height: 100%;
     position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    transition: padding-top 0.3s ease-in-out;
   }
 
   .entry-container {
     position: absolute;
-    top: 0;
+    top: 33vh; /* Move entries down to align with calendar */
     left: 0;
     right: 0;
     bottom: 0;
@@ -270,5 +306,36 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding-top: 2em;
+    transition: top 0.3s ease-in-out;
+  }
+
+  @media (max-width: 1200px) {
+    .container {
+      max-width: none;
+      gap: 2em;
+      padding: 0;
+      justify-content: flex-start;
+    }
+
+    .calendar-container {
+      padding-top: 3em; /* Keep the original padding for small screens */
+    }
+
+    .content {
+      padding-top: 2em; /* Reset padding on smaller screens */
+      margin: 0;
+    }
+
+    .entry-container {
+      top: 0;
+    }
+  }
+
+  .entry-container > div {
+    width: 100%;
+  }
+
+  .no-transition {
+    transition: none !important;
   }
 </style>
