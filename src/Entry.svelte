@@ -23,9 +23,11 @@
 >
   <div class="entry-header">
     <div class="date">
-      {#if date.getDay() === 4}
-        <h1>★</h1>
-      {/if}
+      <div class="star-container">
+        {#if date.getDay() === 4}
+          <h1>★</h1>
+        {/if}
+      </div>
       <h1>
         {date.toLocaleDateString("en-US", { weekday: "long" })}
         {date.toLocaleDateString()}
@@ -86,7 +88,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     gap: 0.5em;
   }
@@ -142,5 +144,16 @@
     margin: 0;
     position: relative;
     z-index: 1;
+  }
+
+  .star-container {
+    width: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .star-container h1 {
+    margin: 0;
   }
 </style>
