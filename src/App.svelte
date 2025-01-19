@@ -5,8 +5,9 @@
   import { getWeekNumber, parseDiaryEntries } from "./utils.ts";
   import Entry from "./Entry.svelte"; // Import the Entry component
   import { fade } from "svelte/transition";
+  import type { Entry } from "./Entry.svelte";
 
-  let entries = []; // Initialize entries as empty array
+  let entries: Entry[] = []; // Initialize entries as empty array
   let loading = true; // Add loading state
   let scrollDelta = 0; // Accumulate scroll delta
   const SCROLL_THRESHOLD = 400; // Define a threshold for scroll
@@ -143,9 +144,7 @@
 <main>
   <div class="container">
     <div class="calendar-container">
-      {#if loading}
-        <p>Loading calendars...</p>
-      {:else}
+      {#if !loading}
         {#each [2025, 2024, 2023] as year}
           <Calendar
             id={`cal${year}`}
