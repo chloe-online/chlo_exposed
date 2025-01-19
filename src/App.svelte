@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import Calendar from "./Calendar.svelte";
-  import { selectedWeek } from "./stores.js";
-  import { getWeekNumber, parseDiaryEntries } from "./utils.js";
+  import { selectedWeek } from "./stores.ts";
+  import { getWeekNumber, parseDiaryEntries } from "./utils.ts";
   import Entry from "./Entry.svelte"; // Import the Entry component
   import { fade } from "svelte/transition";
 

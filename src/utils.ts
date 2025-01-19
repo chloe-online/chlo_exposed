@@ -1,10 +1,10 @@
-export function getWeekNumber(date) {
+export function getWeekNumber(date: Date) {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-  const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+  const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 }
 
-export async function parseDiaryEntries(text) {
+export async function parseDiaryEntries(text: string) {
   const withoutHeader = text.split("\n").slice(2).join("\n");
   const rawEntries = withoutHeader.split("<div><br></div>\n");
 

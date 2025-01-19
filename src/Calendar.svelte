@@ -1,6 +1,6 @@
-<script>
-  import { selectedWeek } from "./stores.js";
-  import { getWeekNumber } from "./utils.js";
+<script lang="ts">
+  import { selectedWeek } from "./stores.ts";
+  import { getWeekNumber } from "./utils.ts";
 
   export let year;
   export let id;
