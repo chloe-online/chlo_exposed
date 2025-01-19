@@ -7,7 +7,7 @@
   export let entries;
 
   const GRID_SIZE = 7;
-  const SQUARE_SIZE = 30;
+  const dot_SIZE = 30;
   const GAP = 5;
   const DOT_SIZE = 5; // diameter of dots in pixels
   const DOT_SPACING_RATE = 2; // pixels to increase per day of distance
@@ -29,10 +29,10 @@
     return { index, row, col, weekNumber };
   });
 
-  // Function to generate random dots within a square
+  // Function to generate random dots within a dot
   function generateDots(spacing, size) {
     const dots = [];
-    const count = Math.ceil(30 / spacing); // 30 is square size
+    const count = Math.ceil(30 / spacing); // 30 is dot size
 
     for (let x = 0; x < count; x++) {
       for (let y = 0; y < count; y++) {
@@ -48,7 +48,7 @@
     return dots;
   }
 
-  // Function to check if a square has entries
+  // Function to check if a dot has entries
   function hasEntries(weekNumber) {
     const entriesForWeek = entries.filter((entry) => {
       if (!entry || !entry.date) {
@@ -98,7 +98,7 @@
     };
   }
 
-  function handleSquareClick(weekNumber) {
+  function handledotClick(weekNumber) {
     const { hasEntry } = hasEntries(weekNumber);
     if (hasEntry) {
       $selectedWeek = { year, week: weekNumber };
@@ -120,9 +120,9 @@
     isFullyExpanded = false;
   }
 
-  $: getSquareStyle = (weekIcon) => {
-    const x = isGridHovered ? weekIcon.col * (SQUARE_SIZE + GAP) : 0;
-    const y = isGridHovered ? weekIcon.row * (SQUARE_SIZE + GAP) : 0;
+  $: getdotStyle = (weekIcon) => {
+    const x = isGridHovered ? weekIcon.col * (dot_SIZE + GAP) : 0;
+    const y = isGridHovered ? weekIcon.row * (dot_SIZE + GAP) : 0;
     return `--x: ${x}px; --y: ${y}px;`;
   };
 
@@ -161,18 +161,18 @@
         {#each grid as weekIcon (weekIcon.index)}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
-            class="square"
+            class="dot"
             class:has-entries={hasEntries(weekIcon.weekNumber).hasEntry}
             class:has-comment={hasEntries(weekIcon.weekNumber).hasComment}
             class:selected={$selectedWeek &&
               $selectedWeek.week === weekIcon.weekNumber &&
               $selectedWeek.year === year}
-            style="{getSquareStyle(weekIcon)} background-color: {hasEntries(
+            style="{getdotStyle(weekIcon)} background-color: {hasEntries(
               weekIcon.weekNumber
             ).color};"
             data-week={weekIcon.weekNumber}
             data-has-entries={hasEntries(weekIcon.weekNumber).hasEntry}
-            on:click={() => handleSquareClick(weekIcon.weekNumber)}
+            on:click={() => handledotClick(weekIcon.weekNumber)}
           >
             {#if hasEntries(weekIcon.weekNumber).hasEntry}
               <svg width="30" height="30" viewBox="0 0 30 30">
@@ -227,7 +227,7 @@
     height: 245px;
   }
 
-  .square {
+  .dot {
     position: absolute;
     top: 0;
     left: 0;
@@ -243,11 +243,11 @@
     border: none;
   }
 
-  .square.has-entries {
+  .dot.has-entries {
     cursor: pointer;
   }
 
-  .square.has-entries.has-comment::after {
+  .dot.has-entries.has-comment::after {
     content: "";
     position: absolute;
     top: 2.5px;
@@ -261,28 +261,28 @@
     border: none !important;
   }
 
-  .square.has-entries.has-comment.selected::after {
+  .dot.has-entries.has-comment.selected::after {
     border: 2px dashed var(--accent-color);
   }
 
-  .grid:not(.expanded) .square.has-entries.has-comment::after {
+  .grid:not(.expanded) .dot.has-entries.has-comment::after {
     display: none;
   }
 
-  .grid:not(.expanded) .square.has-entries.selected::after {
+  .grid:not(.expanded) .dot.has-entries.selected::after {
     display: block;
   }
 
-  .grid:not(.expanded) .square:first-child {
+  .grid:not(.expanded) .dot:first-child {
     opacity: 1;
   }
 
-  .grid.fully-expanded .square:hover {
+  .grid.fully-expanded .dot:hover {
     transform: translate(var(--x, 0), var(--y, 0)) scale(1.2);
     z-index: 2;
   }
 
-  .square.selected {
+  .dot.selected {
     background-color: var(--selected-color);
     border: 2px dashed var(--bg-color);
     opacity: 1;
