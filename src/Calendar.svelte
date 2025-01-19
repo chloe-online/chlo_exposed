@@ -241,6 +241,11 @@
     background-color: var(--dot-color);
     overflow: hidden;
     border: none;
+    box-shadow: none; /* No shadow by default */
+  }
+
+  .grid.expanded .dot {
+    transform: translate(var(--x, 0), var(--y, 0));
   }
 
   .dot.has-entries {
