@@ -42,9 +42,9 @@
     if (entriesForWeek.length === 0)
       return {
         hasEntry: false,
-        dotSpacing: "0",
+        dotSpacing: "4",
         hasComment: false,
-        color: null,
+        color: "rgba(128, 128, 128, 0.3)",
       };
 
     // Check if any entries have comments
@@ -186,18 +186,20 @@
     border-radius: 50%;
     transition: all 0.5s ease;
     transform: translate(var(--x, 0), var(--y, 0));
+    animation: float 3s ease-in-out infinite;
     cursor: default;
-    background-color: transparent;
-    background-image: radial-gradient(
-      circle at center,
-      var(--dot-color, var(--square-color)) 1px,
-      transparent 1px
-    );
-    background-size: var(--dot-spacing, 4px) var(--dot-spacing, 4px);
+    background-color: rgba(128, 128, 128, 0.3); /* Default solid background */
   }
 
   .square.has-entries {
     cursor: pointer;
+    background-color: transparent; /* Reset for squares with entries */
+    background-image: radial-gradient(
+      circle at center,
+      var(--dot-color) 1px,
+      transparent 1px
+    );
+    background-size: var(--dot-spacing) var(--dot-spacing);
   }
 
   .square.has-entries.has-comment::after {
@@ -209,8 +211,8 @@
     width: 50%;
     height: 50%;
     border-radius: 50%;
-    background-color: white;
-    opacity: 1;
+    background-color: var(--accent-color);
+    opacity: 0.5;
   }
 
   .grid:not(.expanded) .square.has-entries.has-comment::after {
