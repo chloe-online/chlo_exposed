@@ -143,8 +143,8 @@
 
 <main>
   <div class="container">
+    <button class="about-button">About</button>
     <div class="calendar-container">
-      <button class="about-button">About</button>
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
           <Calendar
