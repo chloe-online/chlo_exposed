@@ -33,22 +33,38 @@
     }
   });
 
+  function incrementDate() {}
+
   function handleKeyDown(event) {
     if (!$selectedWeek) return;
 
     let { week, year } = $selectedWeek;
 
     if (event.key === "ArrowUp") {
-      week += 1;
-      if (week > 52) {
-        week = 1;
-        year += 1;
+      if (
+        !(
+          year === entries[0].date.getFullYear() &&
+          week === getWeekNumber(entries[0].date)
+        )
+      ) {
+        week += 1;
+        if (week > 52) {
+          week = 1;
+          year += 1;
+        }
       }
     } else if (event.key === "ArrowDown") {
-      week -= 1;
-      if (week < 1) {
-        week = 52;
-        year -= 1;
+      if (
+        !(
+          year === entries[entries.length - 1].date.getFullYear() &&
+          week === getWeekNumber(entries[entries.length - 1].date)
+        )
+      ) {
+        week -= 1;
+        if (week < 1) {
+          week = 52;
+          year -= 1;
+        }
       }
     }
 
