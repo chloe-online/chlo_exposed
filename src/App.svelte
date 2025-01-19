@@ -207,7 +207,7 @@
 
   @media (prefers-color-scheme: dark) {
     :global(:root) {
-      --bg-color: #000000;
+      --bg-color: #111111;
       --text-color: #ffffff;
       --square-color: #f0f0f0;
       --accent-color: #333333;

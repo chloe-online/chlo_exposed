@@ -9,14 +9,16 @@
   const GRID_SIZE = 7;
   const SQUARE_SIZE = 30;
   const GAP = 5;
+  const DOT_SIZE = 15; // diameter of dots in pixels
+  const DOT_SPACING_RATE = 4; // pixels to increase per day of distance
 
+  // color source https://www.stencil.wiki/colors
   const colorPalette = {
-    "bottom left": "#fbb4ae",
-    "bottom right": "#b3cde3",
-    "middle left": "#ccebc5",
-    "middle right": "#decbe4",
-    "top left": "#fed9a6",
-    "top right": "#ffffcc",
+    left: "#f15060", // bright red ブライトレッド
+    right: "#3D5588", // risoofederal blue リソー フェデラルブルー
+    bottom: "#ffe800", // yellow イエロー
+    middle: "#ff48b0", // fluorescent pink 蛍光ピンク
+    top: "#5ec8e5", // aqua アクア
   };
 
   // Create grid with week numbers
@@ -26,6 +28,25 @@
     const weekNumber = index + 1;
     return { index, row, col, weekNumber };
   });
+
+  // Function to generate random dots within a square
+  function generateDots(spacing, size) {
+    const dots = [];
+    const count = Math.ceil(30 / spacing); // 30 is square size
+
+    for (let x = 0; x < count; x++) {
+      for (let y = 0; y < count; y++) {
+        const offsetX = (Math.random() * 2 - 1).toFixed(2);
+        const offsetY = (Math.random() * 2 - 1).toFixed(2);
+        dots.push({
+          x: x * spacing + Number(offsetX) + spacing / 2,
+          y: y * spacing + Number(offsetY) + spacing / 2,
+          size,
+        });
+      }
+    }
+    return dots;
+  }
 
   // Function to check if a square has entries
   function hasEntries(weekNumber) {
@@ -45,6 +66,8 @@
         dotSpacing: "4",
         hasComment: false,
         color: "rgba(128, 128, 128, 0.3)",
+        dotColor: "rgba(128, 128, 128, 0.3)",
+        dots: [],
       };
 
     // Check if any entries have comments
@@ -52,19 +75,27 @@
       (entry) => entry.comment.trim() !== ""
     );
 
-    // Find the entry with the minimum distance from Thursday
     const minDistance = Math.min(
       ...entriesForWeek.map((entry) => getDayDistanceFromThursday(entry.date))
     );
 
-    // Calculate dot spacing based on distance (0 = dense, 3 = sparse)
-    const dotSpacing = 2 + minDistance * 2;
+    // Base spacing is dot size plus additional spacing based on distance
+    const dotSpacing = DOT_SIZE + (minDistance + 1) * DOT_SPACING_RATE;
 
-    // Determine color based on the site of the first entry
+    // Get the site and determine background and dot colors
     const site = entriesForWeek[0].site.toLowerCase();
-    const color = colorPalette[site] || "var(--square-color)";
+    const [location, side] = site.split(" ");
+    const dotColor = colorPalette[location];
+    const backgroundColor = colorPalette[side];
 
-    return { hasEntry: true, dotSpacing, hasComment, color };
+    return {
+      hasEntry: true,
+      dotSpacing,
+      hasComment,
+      color: backgroundColor,
+      dotColor: dotColor,
+      dots: generateDots(dotSpacing, DOT_SIZE),
+    };
   }
 
   function handleSquareClick(weekNumber) {
@@ -98,8 +129,19 @@
   function getDayDistanceFromThursday(date) {
     const day = date.getDay();
     const thursday = 4; // 0 is Sunday, 4 is Thursday
-    const distance = Math.abs(day - thursday);
-    return Math.min(distance, 7 - distance); // Get shortest distance considering week wrapping
+
+    // Create an asymmetric distance mapping where Friday and Saturday have different values
+    const distances = {
+      0: 3, // Sunday
+      1: 2, // Monday
+      2: 1, // Tuesday
+      3: 1, // Wednesday
+      4: 0, // Thursday
+      5: 1.5, // Friday - slightly larger distance
+      6: 2.5, // Saturday - even larger distance
+    };
+
+    return distances[day];
   }
 </script>
 
@@ -125,14 +167,26 @@
             class:selected={$selectedWeek &&
               $selectedWeek.week === weekIcon.weekNumber &&
               $selectedWeek.year === year}
-            style="{getSquareStyle(weekIcon)} --dot-spacing: {hasEntries(
+            style="{getSquareStyle(weekIcon)} background-color: {hasEntries(
               weekIcon.weekNumber
-            ).dotSpacing}px; --dot-color: {hasEntries(weekIcon.weekNumber)
-              .color};"
+            ).color};"
             data-week={weekIcon.weekNumber}
             data-has-entries={hasEntries(weekIcon.weekNumber).hasEntry}
             on:click={() => handleSquareClick(weekIcon.weekNumber)}
-          ></div>
+          >
+            {#if hasEntries(weekIcon.weekNumber).hasEntry}
+              <svg width="30" height="30" viewBox="0 0 30 30">
+                <g
+                  fill={hasEntries(weekIcon.weekNumber).dotColor}
+                  opacity="0.75"
+                >
+                  {#each hasEntries(weekIcon.weekNumber).dots as dot}
+                    <circle cx={dot.x} cy={dot.y} r={dot.size / 2} />
+                  {/each}
+                </g>
+              </svg>
+            {/if}
+          </div>
         {/each}
       </div>
     </div>
@@ -184,31 +238,31 @@
     transform: translate(var(--x, 0), var(--y, 0));
     animation: float 3s ease-in-out infinite;
     cursor: default;
-    background-color: rgba(128, 128, 128, 0.3); /* Default solid background */
+    background-color: var(--dot-color);
+    overflow: hidden;
+    border: none;
   }
 
   .square.has-entries {
     cursor: pointer;
-    background-color: transparent; /* Reset for squares with entries */
-    background-image: radial-gradient(
-      circle at center,
-      var(--dot-color) 1px,
-      transparent 1px
-    );
-    background-size: var(--dot-spacing) var(--dot-spacing);
   }
 
   .square.has-entries.has-comment::after {
     content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    height: 50%;
+    top: 2.5px;
+    right: 2.5px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background-color: var(--accent-color);
-    opacity: 0.5;
+    background-color: var(--bg-color);
+    opacity: 1;
+    z-index: 1;
+    border: none !important;
+  }
+
+  .square.has-entries.has-comment.selected::after {
+    border: 2px dashed var(--accent-color);
   }
 
   .grid:not(.expanded) .square.has-entries.has-comment::after {
@@ -230,22 +284,9 @@
 
   .square.selected {
     background-color: var(--selected-color);
-    border: 1px dashed var(--accent-color);
+    border: 2px dashed var(--bg-color);
     opacity: 1;
     z-index: 1;
-  }
-
-  .square.has-entries.has-comment.selected::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    height: 50%;
-    border-radius: 50%;
-    background-color: var(--accent-color);
-    opacity: 1;
   }
 
   .year-display {

@@ -5,13 +5,16 @@
   export let transformValue;
 
   const colorPalette = {
-    "bottom left": "#fbb4ae",
-    "bottom right": "#b3cde3",
-    "middle left": "#ccebc5",
-    "middle right": "#decbe4",
-    "top left": "#fed9a6",
-    "top right": "#ffffcc",
+    left: "#f15060", // bright red ブライトレッド
+    right: "#3D5588", // risoofederal blue リソー フェデラルブルー
+    bottom: "#ffe800", // yellow イエロー
+    middle: "#ff48b0", // fluorescent pink 蛍光ピンク
+    top: "#5ec8e5", // aqua アクア
   };
+
+  $: [location, side] = site.split(" ");
+  $: textColor = colorPalette[side];
+  $: bgColor = colorPalette[location];
 </script>
 
 <div
@@ -19,9 +22,6 @@
   style="transform: {transformValue({ date, site, comment })};"
 >
   <div class="entry-header">
-    <div class="site" style="background-color: {colorPalette[site]}">
-      <h1>{site}</h1>
-    </div>
     <div class="date">
       {#if date.getDay() === 4}
         <h1>★</h1>
@@ -30,6 +30,18 @@
         {date.toLocaleDateString("en-US", { weekday: "long" })}
         {date.toLocaleDateString()}
       </h1>
+    </div>
+    <div class="site">
+      <div class="color-dots">
+        <div class="location">
+          <div class="dot" style="background-color: {bgColor}" />
+          <h1>{location}</h1>
+        </div>
+        <div class="side">
+          <div class="dot" style="background-color: {textColor}" />
+          <h1>{side}</h1>
+        </div>
+      </div>
     </div>
   </div>
   <div class="entry-content">
@@ -63,10 +75,10 @@
     border-radius: 0.5em;
     text-align: center;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     flex-direction: column;
-    max-height: 50px;
+    max-height: 75px;
     width: 175px;
   }
 
@@ -84,6 +96,43 @@
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
     font-weight: 100;
-    margin-bottom: 1em;
+  }
+
+  .entry-content {
+    font-size: 1.2em;
+    font-weight: 100;
+    align-self: center;
+    text-align: left;
+    text-wrap: balance;
+    width: 100%;
+    max-width: 75%;
+  }
+
+  .color-dots {
+    display: flex;
+    gap: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .color-dots .location {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+  }
+
+  .color-dots .side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
   }
 </style>
