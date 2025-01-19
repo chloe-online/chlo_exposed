@@ -96,6 +96,9 @@
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
     font-weight: 100;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
 
   .entry-content {
@@ -110,29 +113,34 @@
 
   .color-dots {
     display: flex;
-    gap: 0.5em;
-    margin-bottom: 0.5em;
+    gap: 1em;
   }
 
-  .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-
-  .color-dots .location {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5em;
-  }
-
+  .color-dots .location,
   .color-dots .side {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    gap: 0.5em;
+    position: relative;
+  }
+
+  .dot {
+    width: 30px;
+    height: 30px;
+    opacity: 0.8;
+    border-radius: 50%;
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .color-dots .location h1,
+  .color-dots .side h1 {
+    margin: 0;
+    position: relative;
+    z-index: 1;
   }
 </style>
