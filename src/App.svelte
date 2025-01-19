@@ -61,7 +61,7 @@
           week = 1;
           year += 1;
         }
-        // Stop if we reach the last available week
+        // Stop if we're at the last available week
         if (year > lastYear || (year === lastYear && week > lastWeek)) {
           return;
         }
@@ -79,7 +79,7 @@
           week = 52;
           year -= 1;
         }
-        // Stop if we reach the first available week
+        // Stop if we're at the first available week
         if (year < firstYear || (year === firstYear && week < firstWeek)) {
           return;
         }
@@ -144,6 +144,7 @@
 <main>
   <div class="container">
     <div class="calendar-container">
+      <button class="about-button">About</button>
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
           <Calendar
@@ -306,5 +307,19 @@
 
   .no-transition {
     transition: none !important;
+  }
+
+  .about-button {
+    margin-bottom: 1em;
+    padding: 0.5em 1em;
+    color: var(--accent-color);
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    background: none; /* Remove background */
+  }
+
+  .about-button:hover {
+    text-decoration: underline;
   }
 </style>
