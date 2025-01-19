@@ -4,32 +4,50 @@
 </script>
 
 <div class="about-content">
-  <h2>About This Application</h2>
-  <p>
-    This application is designed to help you track your diary entries by week.
-  </p>
-  <button on:click={onClose}>Close</button>
+  <h1>chlo.exposed - An Injection Diary</h1>
+  <div class="body">
+    <p>
+      A collection of my thoughts during my weekly injection of 0.25mg estradiol
+      valerate. Sometimes just me complaining about pain, sometimes about where
+      I am in the world, sometimes about love, but always about Chloe. I hope
+      you can glean smth
+    </p>
+    <div class="centered">[ beautiful funny cynical wonderful anything ]</div>
+    <p>from the whole process.</p>
+    <p>
+      <i>
+        * Originally I was prescribed 0.3mg but had to be bumped down to 0.25mg
+        because my estrogen levels were consistenly too high. Its affirming that
+        my body process estrogen so well.
+      </i>
+    </p>
+  </div>
 </div>
 
 <style>
   .about-content {
-    padding: 2em;
-    background-color: var(--bg-color);
     color: var(--text-color);
-    border: 1px solid var(--accent-color);
-    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
   }
 
-  button {
-    margin-top: 1em;
-    padding: 0.5em 1em;
-    color: var(--accent-color);
-    border: none;
-    cursor: pointer;
-    background: none;
+  .about-content .body {
+    font-size: 1.2em;
+    font-weight: 100;
+    width: 75%;
+    align-self: flex-end;
   }
 
-  button:hover {
-    text-decoration: underline;
+  .about-content h1 {
+    font-style: italic;
+    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+    font-size: 2em;
+    font-weight: 100;
+  }
+
+  .centered {
+    text-align: center;
   }
 </style>

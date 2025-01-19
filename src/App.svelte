@@ -52,7 +52,6 @@
   function incrementDate() {}
 
   function handleKeyDown(event) {
-    $showAbout = false;
     if (!$selectedWeek || entries.length === 0) return;
 
     let { week, year } = $selectedWeek;
@@ -66,6 +65,7 @@
     const lastYear = lastEntry.date.getFullYear();
 
     if (event.key === "ArrowUp") {
+      $showAbout = false;
       do {
         week += 1;
         if (week > 52) {
@@ -84,6 +84,7 @@
         })
       );
     } else if (event.key === "ArrowDown") {
+      $showAbout = false;
       do {
         week -= 1;
         if (week < 1) {
@@ -154,8 +155,8 @@
 
 <main>
   <div class="container">
-    <button class="about-button" on:click={handleAboutClick}>About</button>
     <div class="calendar-container">
+      <button class="about-button" on:click={handleAboutClick}>About</button>
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
           <Calendar
@@ -172,7 +173,7 @@
       <!-- <div class="entry-container" on:wheel={handleWheel}> -->
       <div class="entry-container">
         {#if $showAbout}
-          <About on:close={closeAbout} />
+          <About />
         {:else}
           {#each filteredEntries as entry (entry.date.getTime())}
             <div class:no-transition={isScrolling}>
@@ -258,13 +259,13 @@
   .calendar-container {
     flex: 0 0 auto;
     display: flex;
-    justify-content: flex-start;
     flex-direction: column;
     padding: 1em;
     padding-top: calc(33vh + 1em); /* Reduced from 3em to 1em */
     overflow: hidden;
     border-right: 1px solid #333;
     transition: padding-top 0.3s ease-in-out;
+    position: relative; /* Add this to position the button */
   }
 
   .content {
@@ -332,6 +333,9 @@
     cursor: pointer;
     transition: color 0.3s ease;
     background: none; /* Remove background */
+    position: absolute; /* Position the button absolutely */
+    top: 0; /* Align to the top */
+    right: 0; /* Align to the right */
   }
 
   .about-button:hover {
