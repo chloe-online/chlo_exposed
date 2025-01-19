@@ -130,7 +130,6 @@
             return entryWeek === week && entryYear === year;
           })
         );
-        scrollDelta = 0; // Only reset when actually changing weeks
       } else if (scrollDelta > 0) {
         // Scrolling down
         do {
@@ -151,10 +150,10 @@
             return entryWeek === week && entryYear === year;
           })
         );
-        scrollDelta = 0; // Only reset when actually changing weeks
       }
 
       selectedWeek.set({ year, week });
+      scrollDelta = 0; // Reset scrollDelta immediately after changing weeks
     }
   }
 
@@ -179,19 +178,19 @@
     return `translateY(${scrollAmount}px)`;
   };
 
-  function handleWheel(event) {
-    isScrolling = true;
-    lastChangeWasScroll = true;
-    clearTimeout(wheelTimeout);
+  //   function handleWheel(event) {
+  //     isScrolling = true;
+  //     lastChangeWasScroll = true;
+  //     clearTimeout(wheelTimeout);
 
-    handleScroll(event);
+  //     // handleScroll(event);
 
-    wheelTimeout = setTimeout(() => {
-      scrollDelta = 0;
-      isScrolling = false;
-      lastChangeWasScroll = false;
-    }, 100);
-  }
+  //     wheelTimeout = setTimeout(() => {
+  //       scrollDelta = 0;
+  //       isScrolling = false;
+  //       lastChangeWasScroll = false;
+  //     }, 100);
+  //   }
 
   function handleCalendarClick() {
     lastChangeWasScroll = false;
@@ -236,7 +235,8 @@
     </div>
 
     <div class="content">
-      <div class="entry-container" on:wheel={handleWheel}>
+      <!-- <div class="entry-container" on:wheel={handleWheel}> -->
+      <div class="entry-container">
         {#each filteredEntries as entry (entry.date.getTime())}
           <div class:no-transition={isScrolling}>
             {#if !lastChangeWasScroll}

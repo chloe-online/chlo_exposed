@@ -9,7 +9,7 @@
   const GRID_SIZE = 7;
   const dot_SIZE = 30;
   const GAP = 5;
-  const DOT_SIZE = 5; // diameter of dots in pixels
+  const DOT_SIZE = 6; // diameter of dots in pixels
   const DOT_SPACING_RATE = 2; // pixels to increase per day of distance
 
   // color source https://www.stencil.wiki/colors
@@ -255,8 +255,8 @@
   .dot.has-entries.has-comment::after {
     content: "";
     position: absolute;
-    top: 2.5px;
-    right: 2.5px;
+    top: 3px;
+    right: 3px;
     width: 8px;
     height: 8px;
     border-radius: 50%;
