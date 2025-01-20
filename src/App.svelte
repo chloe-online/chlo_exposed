@@ -374,6 +374,10 @@
     position: absolute; /* Position the button absolutely */
     top: 0; /* Align to the top */
     right: 0; /* Align to the right */
+    font-style: italic;
+    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+    font-size: 2em;
+    font-weight: 100;
   }
 
   .about-button:hover {
@@ -439,6 +443,18 @@
       overflow-x: auto;
       overflow-y: scroll;
       border-right: none;
+    }
+
+    .about-container {
+      padding: 0;
+    }
+
+    .about-button {
+      align-self: flex-start;
+    }
+
+    .content {
+      padding: 0;
     }
 
     .calendar-container > Calendar {

@@ -130,9 +130,12 @@
   @media (max-width: 1200px) {
     .about-content {
       width: 100%;
+      align-self: flex-start;
     }
     .about-content .body {
+      align-self: flex-start;
       width: 100%;
+      padding: 0;
     }
   }
 </style>

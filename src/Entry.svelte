@@ -210,4 +210,17 @@
       width: 100%;
     }
   }
+
+  @media (max-width: 768px) {
+    .entry {
+      width: 100%;
+    }
+
+    .site {
+    }
+
+    .entry-content {
+      align-self: flex-start;
+    }
+  }
 </style>
