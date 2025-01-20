@@ -392,11 +392,18 @@
   @media (max-width: 768px) {
     .container {
       flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      height: 100%;
       padding: 0;
     }
 
     .calendar-container,
     .content {
+      flex: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
       width: 100%;
       max-width: none;
       padding: 1em;
