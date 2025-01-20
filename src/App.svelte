@@ -11,6 +11,7 @@
 
   function handleAboutClick() {
     $showAbout = true;
+    $isCalendarVisible = false;
   }
 
   function closeAbout() {
