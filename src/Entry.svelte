@@ -5,10 +5,12 @@
   export let comment;
   export let transformValue;
 
+  if (comment == "") {
+    comment = "no comment...";
+  }
+
   let dateContainer;
   let useLongDate = true;
-
-  console.log("Date prop:", date, "Is Date?:", date instanceof Date);
 
   const colorPalette = {
     left: "#f15060", // bright red ブライトレッド
@@ -224,5 +226,12 @@
     .entry-content {
       align-self: flex-start;
     }
+  }
+
+  .historical-event {
+    margin-top: 1em;
+    font-size: 0.9em;
+    font-style: italic;
+    color: var(--text-color-secondary, #666);
   }
 </style>
