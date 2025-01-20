@@ -391,7 +391,7 @@
 
   @media (max-width: 768px) {
     .container {
-      flex-direction: column;
+      flex-direction: row;
       align-items: flex-start;
       width: 100%;
       height: 100%;
@@ -420,15 +420,24 @@
     .calendar-container.hidden,
     .content.hidden {
       transform: translateX(100%);
+      flex: 0;
+      padding: 0;
+      height: 0;
+      width: 0;
+      overflow: hidden;
     }
 
     .calendar-container.visible,
     .content.visible {
       transform: translateX(0);
+      overflow-y: scroll;
+      flex: 1;
     }
 
     .calendar-container {
       overflow-x: auto;
+      overflow-y: scroll;
+      border-right: none;
     }
 
     .calendar-container > Calendar {
