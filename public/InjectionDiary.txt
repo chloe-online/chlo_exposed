@@ -256,10 +256,6 @@
 <div>8/24/23</div>
 <div>middle left</div>
 <div><br></div>
-<div>6/7/23</div>
-<div>test</div>
-<div>test test test</div>
-<div><br></div>
 <div>6/6/23</div>
 <div>no site</div>
 <div>Very important special date! This is when I first started taking estrogen, but as you can see the other dates don’t start until august. this is because I initially starting taking estradiol in its pill form</div>
