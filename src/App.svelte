@@ -250,7 +250,7 @@
       --bg-color: #111111;
       --text-color: #ffffff;
       --square-color: #f0f0f0;
-      --accent-color: #333333;
+      --accent-color: #ffffff;
       --selected-color: #ff3e00;
     }
   }
