@@ -313,6 +313,7 @@
     max-width: 700px;
     margin: 0 auto;
     transition: padding-top 0.3s ease-in-out;
+    overflow-x: visible;
   }
 
   .entry-container {

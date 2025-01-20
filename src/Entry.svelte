@@ -52,7 +52,7 @@
     <div class="date" bind:this={dateContainer}>
       <div class="star-container">
         {#if date.getDay() === 4}
-          <h1>★</h1>
+          <h3>★</h3>
         {/if}
       </div>
       <h1>
@@ -129,7 +129,7 @@
     align-items: center;
     justify-content: flex-start;
     text-align: center;
-    gap: 0.5em;
+    gap: 0.1em;
     max-width: 50%;
     min-width: min-content; /* Prevents date from squashing */
     overflow: visible; /* Ensures date text remains visible */
@@ -198,8 +198,9 @@
     align-items: center;
   }
 
-  .star-container h1 {
+  .star-container h3 {
     margin: 0;
+    text-align: center;
   }
 
   .date h1 {
