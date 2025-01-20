@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Calendar from "./Calendar.svelte";
-  import { selectedWeek } from "./stores.ts";
+  import { selectedWeek, isCalendarVisible } from "./stores.ts";
   import { getWeekNumber, parseDiaryEntries } from "./utils.ts";
   import Entry from "./Entry.svelte"; // Import the Entry component
   import { fade } from "svelte/transition";
@@ -132,6 +132,7 @@
     lastChangeWasScroll = false;
     isScrolling = false;
     clearTimeout(wheelTimeout);
+    $isCalendarVisible = false;
   }
 
   onMount(() => {
@@ -151,11 +152,41 @@
         );
       })
     : entries;
+
+  function handleSwipe(event) {
+    const touch = event.changedTouches[0];
+    const swipeDistance = touch.clientX - touchStartX;
+
+    if (swipeDistance < -50) {
+      // Swipe left
+      $isCalendarVisible = false;
+    } else if (swipeDistance > 50) {
+      // Swipe right
+      $isCalendarVisible = true;
+    }
+  }
+
+  let touchStartX = 0;
+
+  function handleTouchStart(event) {
+    touchStartX = event.touches[0].clientX;
+  }
+
+  onMount(() => {
+    const container = document.querySelector(".container");
+    container.addEventListener("touchstart", handleTouchStart);
+    container.addEventListener("touchend", handleSwipe);
+
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchend", handleSwipe);
+    };
+  });
 </script>
 
 <main>
   <div class="container">
-    <div class="calendar-container">
+    <div class="calendar-container {$isCalendarVisible ? 'visible' : 'hidden'}">
       <button class="about-button" on:click={handleAboutClick}>About</button>
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
@@ -169,7 +200,7 @@
       {/if}
     </div>
 
-    <div class="content">
+    <div class="content {$isCalendarVisible ? 'hidden' : 'visible'}">
       {#if $showAbout}
         <div class="about-container">
           <About />
@@ -185,6 +216,7 @@
                     site={entry.site}
                     comment={entry.comment}
                     {transformValue}
+                    on:click={handleCalendarClick}
                   />
                 </div>
               {:else}
@@ -193,6 +225,7 @@
                   site={entry.site}
                   comment={entry.comment}
                   {transformValue}
+                  on:click={handleCalendarClick}
                 />
               {/if}
             </div>
@@ -355,5 +388,30 @@
     padding: 5em;
     background-color: var(--bg-color);
     transition: top 0.3s ease-in-out;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      padding: 0;
+    }
+
+    .calendar-container,
+    .content {
+      width: 100%;
+      max-width: none;
+      padding: 1em;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .calendar-container.hidden,
+    .content.hidden {
+      transform: translateX(100%);
+    }
+
+    .calendar-container.visible,
+    .content.visible {
+      transform: translateX(0);
+    }
   }
 </style>

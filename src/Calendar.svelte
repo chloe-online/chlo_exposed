@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { selectedWeek, showAbout } from "./stores.ts";
+  import { selectedWeek, showAbout, isCalendarVisible } from "./stores.ts";
   import { getWeekNumber } from "./utils.ts";
 
   export let year;
@@ -103,6 +103,7 @@
     if (hasEntry) {
       $selectedWeek = { year, week: weekNumber };
       $showAbout = false;
+      $isCalendarVisible = false;
     }
   }
 
