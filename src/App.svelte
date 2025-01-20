@@ -443,6 +443,7 @@
       overflow-x: auto;
       overflow-y: scroll;
       border-right: none;
+      gap: 2em;
     }
 
     .about-container {

@@ -308,4 +308,11 @@
     font-style: italic;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
   }
+
+  @media (max-width: 768px) {
+    .Calendar {
+      align-items: flex-end;
+      padding: 0;
+    }
+  }
 </style>
