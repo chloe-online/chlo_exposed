@@ -1,98 +1,96 @@
 <script lang="ts">
-import {
-    onMount
-} from "svelte";
-export let date;
-export let site;
-export let comment;
-export let transformValue;
+  import { onMount } from "svelte";
+  export let date;
+  export let site;
+  export let comment;
+  export let transformValue;
 
-if (comment == "") {
-    comment = "no comment...";
-}
+  let dateContainer;
+  let useLongDate = false;
 
-let dateContainer;
-let useLongDate = false;
+  $: [location, side] = site.split(" ");
+  $: textColor = colorPalette[side];
+  $: bgColor = colorPalette[location];
 
-$: [location, side] = site.split(" ");
-$: textColor = colorPalette[side];
-$: bgColor = colorPalette[location];
-
-const colorPalette = {
+  const colorPalette = {
     left: "#f15060", // bright red ブライトレッド
     right: "#3D5588", // risoofederal blue リソー フェデラルブルー
     bottom: "#ffe800", // yellow イエロー
     middle: "#ff48b0", // fluorescent pink 蛍光ピンク
     top: "#5ec8e5", // aqua アクア
-};
+  };
 
-function checkWidth() {
+  function checkWidth() {
     if (dateContainer) {
-        const width = dateContainer.offsetWidth;
-        console.log("Container width:", width);
-        useLongDate = width > 250;
+      const width = dateContainer.offsetWidth;
+      console.log("Container width:", width);
+      useLongDate = width > 250;
     }
-}
+  }
 
-onMount(() => {
+  onMount(() => {
     const resizeObserver = new ResizeObserver(() => {
-        checkWidth();
+      checkWidth();
     });
 
     if (dateContainer) {
-        resizeObserver.observe(dateContainer.parentElement);
-        checkWidth(); // Initial check
+      resizeObserver.observe(dateContainer.parentElement);
+      checkWidth(); // Initial check
     }
 
     return () => resizeObserver.disconnect();
-});
+  });
 </script>
 
 <div
-    class="entry"
-    style="transform: {transformValue({ date, site, comment })};"
-    >
-    <div class="entry-header">
-        <div class="date" bind:this={dateContainer}>
-            <div class="star-container">
-                {#if date.getDay() === 4}
-                <h3>★</h3>
-                {/if}
-            </div>
-            <h1>
-                {#if useLongDate}
-                {date.toLocaleDateString("en-US", { weekday: "long" })} -
-                {date.toLocaleDateString()}
-                {:else}
-                {date.toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "numeric",
-                day: "numeric",
-                year: "2-digit",
-                })}
-                {/if}
-            </h1>
-        </div>
-        <div class="site">
-            <div class="color-dots">
-                <div class="location">
-                    <div class="dot" style="background-color: {bgColor}" />
-                    <h1>{location}</h1>
-                </div>
-                <div class="side">
-                    <div class="dot" style="background-color: {textColor}" />
-                    <h1>{side}</h1>
-                </div>
-            </div>
-        </div>
+  class="entry"
+  style="transform: {transformValue({ date, site, comment })};"
+>
+  <div class="entry-header">
+    <div class="date" bind:this={dateContainer}>
+      <div class="star-container">
+        {#if date.getDay() === 4}
+          <h3>★</h3>
+        {/if}
+      </div>
+      <h1>
+        {#if useLongDate}
+          {date.toLocaleDateString("en-US", { weekday: "long" })} -
+          {date.toLocaleDateString()}
+        {:else}
+          {date.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "numeric",
+            day: "numeric",
+            year: "2-digit",
+          })}
+        {/if}
+      </h1>
     </div>
-    <div class="entry-content">
-        <p>{comment}</p>
+    <div class="site">
+      <div class="color-dots">
+        <div class="location">
+          <div class="dot" style="background-color: {bgColor}" />
+          <h1>{location}</h1>
+        </div>
+        <div class="side">
+          <div class="dot" style="background-color: {textColor}" />
+          <h1>{side}</h1>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="entry-content">
+    {#if comment == ""}
+      <p><i>no comment...</i></p>
+    {:else}
+      <p>{comment}</p>
+    {/if}
+  </div>
 </div>
 
 <style>
-.entry {
+  .entry {
     margin-bottom: 1em;
     display: flex;
     flex-direction: column;
@@ -103,9 +101,9 @@ onMount(() => {
     /* Default width for large screens */
     min-width: min-content;
     /* Prevents squashing below content minimum width */
-}
+  }
 
-.entry-header {
+  .entry-header {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -117,9 +115,9 @@ onMount(() => {
     gap: 1em;
     /* Adds spacing between wrapped items */
     border-bottom: 1px solid var(--text-color);
-}
+  }
 
-.site {
+  .site {
     padding: 10px;
     border-radius: 0.5em;
     text-align: center;
@@ -129,9 +127,9 @@ onMount(() => {
     flex-direction: column;
     max-height: 75px;
     width: 175px;
-}
+  }
 
-.date {
+  .date {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -143,9 +141,9 @@ onMount(() => {
     /* Prevents date from squashing */
     overflow: visible;
     /* Ensures date text remains visible */
-}
+  }
 
-.entry h1 {
+  .entry h1 {
     font-style: italic;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
@@ -153,9 +151,9 @@ onMount(() => {
     justify-content: center;
     align-items: center;
     text-align: center;
-}
+  }
 
-.entry-content {
+  .entry-content {
     font-size: 1.2em;
     font-weight: 100;
     align-self: flex-start;
@@ -169,23 +167,23 @@ onMount(() => {
     /* Allows long words to break */
     word-break: break-word;
     /* Additional support for word breaking */
-}
+  }
 
-.color-dots {
+  .color-dots {
     display: flex;
     gap: 0.6em;
-}
+  }
 
-.color-dots .location,
-.color-dots .side {
+  .color-dots .location,
+  .color-dots .side {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
     position: relative;
-}
+  }
 
-.dot {
+  .dot {
     width: 30px;
     height: 30px;
     opacity: 0.8;
@@ -195,55 +193,56 @@ onMount(() => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
+  }
 
-.color-dots .location h1,
-.color-dots .side h1 {
+  .color-dots .location h1,
+  .color-dots .side h1 {
     margin: 0;
     position: relative;
     z-index: 1;
-}
+  }
 
-.star-container {
+  .star-container {
     width: 1em;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
     align-items: center;
-}
+  }
 
-.star-container h3 {
+  .star-container h3 {
     margin: 0;
     text-align: center;
-}
+  }
 
-.date h1 {
+  .date h1 {
     white-space: nowrap;
-}
+  }
 
-@media (max-width: 1200px) {
+  @media (max-width: 1200px) {
     .entry {
-        width: 100%;
+      width: 100%;
     }
-}
+  }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     .entry {
-        width: 100%;
+      width: 100%;
     }
 
-    .site {}
+    .site {
+    }
 
     .entry-content {
-        align-self: flex-start;
+      align-self: flex-start;
     }
-}
+  }
 
-.historical-event {
+  .historical-event {
     margin-top: 1em;
     font-size: 0.9em;
     font-style: italic;
     color: var(--text-color-secondary, #666);
-}
+  }
 </style>
