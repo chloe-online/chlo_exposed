@@ -245,7 +245,7 @@
     --selected-color: white;
   }
 
-  @media (prefers-color-scheme: dark) {
+  /* @media (prefers-color-scheme: dark) {
     :global(:root) {
       --bg-color: #111111;
       --text-color: #ffffff;
@@ -253,7 +253,7 @@
       --accent-color: #ffffff;
       --selected-color: #ff3e00;
     }
-  }
+  } */
 
   html,
   body {
