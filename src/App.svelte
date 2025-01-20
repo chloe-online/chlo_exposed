@@ -400,7 +400,7 @@
 
     .calendar-container,
     .content {
-      flex: 0;
+      flex: none;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -408,6 +408,13 @@
       max-width: none;
       padding: 1em;
       transition: transform 0.3s ease-in-out;
+    }
+
+    .about-button {
+      display: flex;
+      position: relative;
+      align-self: flex-end;
+      margin-bottom: 1em;
     }
 
     .calendar-container.hidden,
@@ -418,6 +425,15 @@
     .calendar-container.visible,
     .content.visible {
       transform: translateX(0);
+    }
+
+    .calendar-container {
+      overflow-x: auto;
+    }
+
+    .calendar-container > Calendar {
+      width: 100%;
+      max-width: 400px;
     }
   }
 </style>
