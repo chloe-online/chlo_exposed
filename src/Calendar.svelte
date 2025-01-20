@@ -100,10 +100,12 @@
 
   function handledotClick(weekNumber) {
     const { hasEntry } = hasEntries(weekNumber);
-    if (hasEntry) {
-      $selectedWeek = { year, week: weekNumber };
-      $showAbout = false;
-      $isCalendarVisible = false;
+    if (isFullyExpanded) {
+      if (hasEntry) {
+        $selectedWeek = { year, week: weekNumber };
+        $showAbout = false;
+        $isCalendarVisible = false;
+      }
     }
   }
 

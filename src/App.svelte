@@ -132,7 +132,6 @@
     lastChangeWasScroll = false;
     isScrolling = false;
     clearTimeout(wheelTimeout);
-    $isCalendarVisible = false;
   }
 
   onMount(() => {
