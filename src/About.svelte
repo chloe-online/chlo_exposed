@@ -10,7 +10,7 @@
 </script>
 
 <div class="about-content">
-  <h1>chlo.exposed - An Injection Diary</h1>
+  <h1>An Injection Diary</h1>
   <div class="body">
     <p>
       A collection of my thoughts during my weekly injection of 0.25mg estradiol
@@ -18,9 +18,8 @@
       I am in the world, sometimes about love, but always about Chloe.
     </p>
     <p>
-      Injections are intended to be performed every Thursday, but as I am only
-      human this is not always the case. The location of the injection rotates
-      left to right each week and moves from the bottom of my thigh to the top.
+      The location of the injection rotates left to right each week and moves
+      from the bottom of my thigh to the top.
     </p>
     <div class="centered">
       <div class="injection-location-container">
@@ -55,9 +54,19 @@
         </div>
       </div>
     </div>
-    <p>I hope you can glean smth</p>
+    <p>
+      Injections are intended to be performed every Thursday, but as I am only
+      human this is not always the case.
+    </p>
+    <p>I hope you can find something</p>
     <div class="centered">[ beautiful funny cynical wonderful anything ]</div>
-    <p>from the whole process.</p>
+    <div class="right-aligned">
+      <p>from my diary.</p>
+    </div>
+    <div class="right-aligned">
+      <p>With love, Chloe</p>
+    </div>
+    <hr />
     <p>
       <i>
         * Originally I was prescribed 0.3mg but had to be bumped down to 0.25mg
@@ -81,7 +90,8 @@
     font-size: 1.2em;
     font-weight: 100;
     width: 75%;
-    align-self: flex-end;
+    align-self: flex-start;
+    padding-left: 2em;
   }
 
   .about-content h1 {
@@ -89,6 +99,8 @@
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
     font-weight: 100;
+    width: 100%;
+    border-bottom: 1px solid var(--text-color);
   }
 
   .centered {
@@ -109,6 +121,7 @@
     margin: 0;
     position: relative;
     z-index: 0;
+    border-bottom: none;
   }
 
   .injection-location {
@@ -125,6 +138,16 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .right-aligned {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+  }
+
+  .right-aligned p {
+    align-self: flex-end;
   }
 
   @media (max-width: 1200px) {

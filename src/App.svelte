@@ -389,7 +389,7 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: 5em;
+    padding-top: 2em;
     background-color: var(--bg-color);
     transition: top 0.3s ease-in-out;
   }

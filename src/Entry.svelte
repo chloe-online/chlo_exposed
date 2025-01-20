@@ -90,7 +90,6 @@
 <style>
   .entry {
     margin-bottom: 1em;
-    padding: 1em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -109,6 +108,7 @@
     width: 100%;
     flex-wrap: wrap; /* Allows header items to wrap when space is tight */
     gap: 1em; /* Adds spacing between wrapped items */
+    border-bottom: 1px solid var(--text-color);
   }
 
   .site {
@@ -148,7 +148,8 @@
   .entry-content {
     font-size: 1.2em;
     font-weight: 100;
-    align-self: center;
+    align-self: flex-start;
+    padding-left: 2em;
     text-align: left;
     text-wrap: balance;
     width: 100%;
