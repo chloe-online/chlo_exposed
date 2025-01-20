@@ -10,7 +10,7 @@
   }
 
   let dateContainer;
-  let useLongDate = true;
+  let useLongDate = false;
 
   const colorPalette = {
     left: "#f15060", // bright red ブライトレッド
@@ -196,6 +196,8 @@
   .star-container {
     width: 1em;
     display: flex;
+    flex-direction: row;
+    align-items: flex-start;
     justify-content: center;
     align-items: center;
   }

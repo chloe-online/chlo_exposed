@@ -243,6 +243,7 @@
     --accent-color: #333333;
     --square-color: #a89996;
     --selected-color: white;
+    --star-color: #ffb511;
   }
 
   /* @media (prefers-color-scheme: dark) {
