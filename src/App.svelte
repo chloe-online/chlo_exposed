@@ -170,11 +170,12 @@
     </div>
 
     <div class="content">
-      <!-- <div class="entry-container" on:wheel={handleWheel}> -->
-      <div class="entry-container">
-        {#if $showAbout}
+      {#if $showAbout}
+        <div class="about-container">
           <About />
-        {:else}
+        </div>
+      {:else}
+        <div class="entry-container">
           {#each filteredEntries as entry (entry.date.getTime())}
             <div class:no-transition={isScrolling}>
               {#if !lastChangeWasScroll}
@@ -196,8 +197,8 @@
               {/if}
             </div>
           {/each}
-        {/if}
-      </div>
+        </div>
+      {/if}
     </div>
   </div>
 </main>
@@ -315,6 +316,10 @@
     .entry-container {
       top: 0;
     }
+
+    .about-container {
+      padding-top: 2em;
+    }
   }
 
   .entry-container > div {
@@ -340,5 +345,15 @@
 
   .about-button:hover {
     text-decoration: underline;
+  }
+
+  .about-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 5em;
+    background-color: var(--bg-color);
+    transition: top 0.3s ease-in-out;
   }
 </style>
