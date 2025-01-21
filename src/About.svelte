@@ -1,12 +1,12 @@
 <!-- About.svelte -->
 <script>
-const colorPalette = {
+  const colorPalette = {
     left: "#f15060", // bright red ブライトレッド
     right: "#3D5588", // risoofederal blue リソー フェデラルブルー
     bottom: "#ffe800", // yellow イエロー
     middle: "#ff48b0", // fluorescent pink 蛍光ピンク
     top: "#5ec8e5", // aqua アクア
-};
+  };
 </script>
 
 <div class="about-content">
@@ -70,66 +70,66 @@ const colorPalette = {
     <p>
       <i>
         * Originally I was prescribed 0.3mg but had to be bumped down to 0.25mg
-        because my estrogen levels were consistenly too high. Its affirming that
-        my body process estrogen so well.
+        because my estrogen levels were consistenly too high. It's affirming
+        that my body processes estrogen too well.
       </i>
     </p>
   </div>
 </div>
 
 <style>
-.about-content {
+  .about-content {
     color: var(--text-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-}
+  }
 
-.about-content .body {
+  .about-content .body {
     font-size: 1.2em;
     font-weight: 100;
     width: 75%;
     align-self: flex-start;
     padding-left: 2em;
-}
+  }
 
-.about-content h1 {
+  .about-content h1 {
     font-style: italic;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
     font-weight: 100;
     width: 100%;
     border-bottom: 1px solid var(--text-color);
-}
+  }
 
-.centered {
+  .centered {
     text-align: center;
-}
+  }
 
-.injection-location-container {
+  .injection-location-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 1em;
-}
+  }
 
-.injection-location h1 {
+  .injection-location h1 {
     font-size: 1.2em;
     font-weight: 100;
     margin: 0;
     position: relative;
     z-index: 0;
     border-bottom: none;
-}
+  }
 
-.injection-location {
+  .injection-location {
     position: relative;
     background-color: none;
-}
+  }
 
-.injection-location .dot {
+  .injection-location .dot {
     width: 20px;
     height: 20px;
     opacity: 0.8;
@@ -138,28 +138,28 @@ const colorPalette = {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
+  }
 
-.right-aligned {
+  .right-aligned {
     display: flex;
     flex-direction: row-reverse;
     align-items: flex-end;
-}
+  }
 
-.right-aligned p {
+  .right-aligned p {
     align-self: flex-end;
-}
+  }
 
-@media (max-width: 1200px) {
+  @media (max-width: 1200px) {
     .about-content {
-        width: 100%;
-        align-self: flex-start;
+      width: 100%;
+      align-self: flex-start;
     }
 
     .about-content .body {
-        align-self: flex-start;
-        width: 100%;
-        padding: 0;
+      align-self: flex-start;
+      width: 100%;
+      padding: 0;
     }
-}
+  }
 </style>
