@@ -4,7 +4,6 @@
   import Dot from "./Dot.svelte";
 
   export let year: number;
-  export let id: string;
   export let entries: {
     date: Date;
     site: string;

@@ -17,7 +17,7 @@
     $showAbout = false;
   }
 
-  let entries: Entry[] = []; // Initialize entries as empty array
+  let entries: { date: Date; site: string; comment: string }[] = [];
   let loading = true; // Add loading state
   let scrollDelta = 0; // Accumulate scroll delta
   const SCROLL_THRESHOLD = 400; // Define a threshold for scroll
@@ -48,8 +48,6 @@
       loading = false;
     }
   });
-
-  function incrementDate() {}
 
   function handleKeyDown(event) {
     if (!$selectedWeek || entries.length === 0) return;
