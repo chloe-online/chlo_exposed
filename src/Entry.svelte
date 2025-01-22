@@ -153,11 +153,13 @@
     justify-content: center;
     max-height: 75px;
     width: 175px;
+    background: transparent;
   }
 
   .color-dots {
     display: flex;
     gap: 0.6em;
+    background: transparent;
   }
 
   .color-dots .location,
@@ -166,6 +168,7 @@
     align-items: flex-start;
     justify-content: center;
     position: relative;
+    background: transparent;
   }
 
   .dot {
@@ -174,10 +177,15 @@
     opacity: 0.8;
     border-radius: 50%;
     position: absolute;
-    z-index: -1;
+    z-index: 0;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .color-dots h1 {
+    position: relative;
+    z-index: 1;
   }
 
   /* Content section */
