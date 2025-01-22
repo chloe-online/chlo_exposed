@@ -5,7 +5,6 @@
   import { getWeekNumber, parseDiaryEntries } from "./utils.ts";
   import Entry from "./Entry.svelte"; // Import the Entry component
   import { fade } from "svelte/transition";
-  import type { Entry } from "./Entry.svelte";
   import About from "./About.svelte";
   import { showAbout } from "./stores.ts";
 
@@ -199,12 +198,7 @@
       </button>
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
-          <Calendar
-            id={`cal${year}`}
-            {year}
-            {entries}
-            on:click={handleCalendarClick}
-          />
+          <Calendar {year} {entries} on:click={handleCalendarClick} />
         {/each}
       {/if}
     </div>

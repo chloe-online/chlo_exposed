@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { colorPalette } from "./constants";
   export let date;
   export let site;
   export let comment;
@@ -11,14 +12,6 @@
   $: [location, side] = site.split(" ");
   $: textColor = colorPalette[side];
   $: bgColor = colorPalette[location];
-
-  const colorPalette = {
-    left: "#f15060", // bright red ブライトレッド
-    right: "#3D5588", // risoofederal blue リソー フェデラルブルー
-    bottom: "#ffe800", // yellow イエロー
-    middle: "#ff48b0", // fluorescent pink 蛍光ピンク
-    top: "#5ec8e5", // aqua アクア
-  };
 
   function checkWidth() {
     if (dateContainer) {
