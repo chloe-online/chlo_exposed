@@ -1,33 +1,42 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { colorPalette } from "./constants";
-  export let date;
-  export let site;
-  export let comment;
 
-  let dateContainer;
+  // Props
+  export let date: Date;
+  export let site: string;
+  export let comment: string;
+
+  // DOM references
+  let dateContainer: HTMLDivElement;
+
+  // Reactive variables
   let useLongDate = false;
-
   $: [location, side] = site.split(" ");
   $: textColor = colorPalette[side];
   $: bgColor = colorPalette[location];
 
+  // Date formatting options
+  const shortDateOptions = {
+    weekday: "short",
+    month: "numeric",
+    day: "numeric",
+    year: "2-digit",
+  } as const;
+
+  // Width handling
   function checkWidth() {
     if (dateContainer) {
-      const width = dateContainer.offsetWidth;
-      console.log("Container width:", width);
-      useLongDate = width > 250;
+      useLongDate = dateContainer.offsetWidth > 250;
     }
   }
 
   onMount(() => {
-    const resizeObserver = new ResizeObserver(() => {
-      checkWidth();
-    });
+    const resizeObserver = new ResizeObserver(checkWidth);
 
     if (dateContainer) {
       resizeObserver.observe(dateContainer.parentElement);
-      checkWidth(); // Initial check
+      checkWidth();
     }
 
     return () => resizeObserver.disconnect();
@@ -79,6 +88,7 @@
 </div>
 
 <style>
+  /* Layout */
   .entry {
     margin-bottom: 1em;
     display: flex;
@@ -91,67 +101,58 @@
   .entry-header {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     flex-wrap: wrap;
-    /* Allows header items to wrap when space is tight */
     gap: 1em;
-    /* Adds spacing between wrapped items */
     border-bottom: 1px solid var(--text-color);
   }
 
-  .site {
-    padding: 10px;
-    border-radius: 0.5em;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    max-height: 75px;
-    width: 175px;
-  }
-
-  .date {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: center;
-    gap: 0.1em;
-    max-width: 50%;
-    min-width: min-content;
-    /* Prevents date from squashing */
-    overflow: visible;
-    /* Ensures date text remains visible */
-  }
-
+  /* Typography */
   .entry h1 {
     font-style: italic;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
     font-weight: 100;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    margin: 0;
   }
 
-  .entry-content {
-    font-size: 1.2em;
-    font-weight: 100;
-    align-self: flex-start;
-    padding-left: 2em;
-    text-align: left;
-    text-wrap: balance;
-    width: 100%;
-    max-width: 75%;
-    /* Default max-width for large screens */
-    overflow-wrap: break-word;
-    /* Allows long words to break */
-    word-break: break-word;
-    /* Additional support for word breaking */
+  /* Date section */
+  .date {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.1em;
+    max-width: 50%;
+    min-width: min-content;
+    overflow: visible;
+  }
+
+  .date h1 {
+    white-space: nowrap;
+  }
+
+  .star-container {
+    width: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .star-container h3 {
+    margin: 0;
+  }
+
+  /* Site section */
+  .site {
+    padding: 10px;
+    border-radius: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 75px;
+    width: 175px;
   }
 
   .color-dots {
@@ -162,7 +163,6 @@
   .color-dots .location,
   .color-dots .side {
     display: flex;
-    flex-direction: row;
     align-items: flex-start;
     justify-content: center;
     position: relative;
@@ -180,47 +180,35 @@
     transform: translate(-50%, -50%);
   }
 
-  .color-dots .location h1,
-  .color-dots .side h1 {
-    margin: 0;
-    position: relative;
-    z-index: 1;
+  /* Content section */
+  .entry-content {
+    font-size: 1.2em;
+    font-weight: 100;
+    align-self: flex-start;
+    padding-left: 2em;
+    text-align: left;
+    text-wrap: balance;
+    width: 100%;
+    max-width: 75%;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
-  .star-container {
-    width: 1em;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .star-container h3 {
-    margin: 0;
-    text-align: center;
-  }
-
-  .date h1 {
-    white-space: nowrap;
-  }
-
+  /* Responsive design */
   @media (max-width: 1200px) {
     .entry {
       width: 100%;
     }
+
+    .entry-content {
+      max-width: 90%;
+    }
   }
 
   @media (max-width: 768px) {
-    .entry {
-      width: 100%;
-    }
-
-    .site {
-    }
-
     .entry-content {
-      align-self: flex-start;
+      padding-left: 1em;
+      max-width: 100%;
     }
   }
 
