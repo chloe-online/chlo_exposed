@@ -2,25 +2,53 @@
   import { selectedWeek } from "./stores";
   import { getWeekNumber } from "./utils";
   import { colorPalette } from "./constants";
-  import type { Entry } from "./Entry.svelte";
+  import type { CalendarEntry } from "./Calendar.svelte";
 
+  // Types
+  interface DotDimensions {
+    readonly DOT_CONTAINER_SIZE: number;
+    readonly DOT_GAP: number;
+    readonly DOT_SIZE: number;
+    readonly DOT_SPACING_RATE: number;
+  }
+
+  interface Dot {
+    x: number;
+    y: number;
+    size: number;
+  }
+
+  interface DotInfo {
+    hasEntry: boolean;
+    dotSpacing: number;
+    hasComment: boolean;
+    color: string;
+    dotColor: string;
+    dots: Dot[];
+  }
+
+  // Props
   export let weekNumber: number;
   export let year: number;
   export let isGridHovered: boolean;
   export let isFullyExpanded: boolean;
-  export let entries: Entry[];
+  export let entries: CalendarEntry[];
   export let position: { col: number; row: number };
   export let role: string | undefined = undefined;
   export let ariaLabel: string | undefined = undefined;
 
-  const dot_SIZE = 30;
-  const GAP = 5;
-  const DOT_SIZE = 6;
-  const DOT_SPACING_RATE = 2;
+  // Constants
+  const dimensions: DotDimensions = {
+    DOT_CONTAINER_SIZE: 30,
+    DOT_GAP: 5,
+    DOT_SIZE: 6,
+    DOT_SPACING_RATE: 2,
+  } as const;
 
-  function generateDots(spacing: number, size: number) {
-    const dots = [];
-    const count = Math.ceil(30 / spacing);
+  // Helper functions
+  function generateDots(spacing: number, size: number): Dot[] {
+    const dots: Dot[] = [];
+    const count = Math.ceil(dimensions.DOT_CONTAINER_SIZE / spacing);
 
     for (let x = 0; x < count; x++) {
       for (let y = 0; y < count; y++) {
@@ -36,8 +64,7 @@
     return dots;
   }
 
-  function getDayDistanceFromThursday(date: Date) {
-    const day = date.getDay();
+  const getDayDistanceFromThursday = (date: Date): number => {
     const distances: { [key: number]: number } = {
       0: 3.5, // Sunday
       1: 3.5, // Monday
@@ -47,48 +74,57 @@
       5: 1.5, // Friday
       6: 2.5, // Saturday
     };
-    return distances[day];
-  }
+    return distances[date.getDay()];
+  };
 
+  // Reactive declarations
   $: entriesForWeek = entries.filter((entry) => {
     if (!entry?.date) return false;
-    const entryWeek = getWeekNumber(entry.date);
-    const entryYear = entry.date.getFullYear();
-    return entryWeek === weekNumber && entryYear === year;
+    return (
+      getWeekNumber(entry.date) === weekNumber &&
+      entry.date.getFullYear() === year
+    );
   });
 
-  $: dotInfo = (() => {
-    if (entriesForWeek.length === 0) {
+  $: dotInfo = computeDotInfo(entriesForWeek);
+
+  function computeDotInfo(entries: CalendarEntry[]): DotInfo {
+    if (entries.length === 0) {
       return {
         hasEntry: false,
-        dotSpacing: "4",
+        dotSpacing: 4,
         hasComment: false,
         color: "rgba(128, 128, 128, 0.3)",
         dotColor: "rgba(128, 128, 128, 0.3)",
         dots: [],
       };
     }
-    const hasComment = entriesForWeek.some(
-      (entry) => entry.comment.trim() !== ""
-    );
+
+    const hasComment = entries.some((entry) => entry.comment.trim() !== "");
     const minDistance = Math.min(
-      ...entriesForWeek.map((entry) => getDayDistanceFromThursday(entry.date))
+      ...entries.map((entry) => getDayDistanceFromThursday(entry.date))
     );
-    const dotSpacing = DOT_SIZE + (minDistance + 1) * DOT_SPACING_RATE;
-    const [location, side] = entriesForWeek[0].site.toLowerCase().split(" ");
+    const dotSpacing =
+      dimensions.DOT_SIZE + (minDistance + 1) * dimensions.DOT_SPACING_RATE;
+    const [location, side] = entries[0].site.toLowerCase().split(" ");
+
     return {
       hasEntry: true,
       dotSpacing,
       hasComment,
       color: colorPalette[side],
       dotColor: colorPalette[location],
-      dots: generateDots(dotSpacing, DOT_SIZE),
+      dots: generateDots(dotSpacing, dimensions.DOT_SIZE),
     };
-  })();
+  }
 
   $: dotStyle = () => {
-    const x = isGridHovered ? position.col * (dot_SIZE + GAP) : 0;
-    const y = isGridHovered ? position.row * (dot_SIZE + GAP) : 0;
+    const x = isGridHovered
+      ? position.col * (dimensions.DOT_CONTAINER_SIZE + dimensions.DOT_GAP)
+      : 0;
+    const y = isGridHovered
+      ? position.row * (dimensions.DOT_CONTAINER_SIZE + dimensions.DOT_GAP)
+      : 0;
     return `--x: ${x}px; --y: ${y}px;`;
   };
 </script>
@@ -98,21 +134,23 @@
   class="dot"
   class:has-entries={dotInfo.hasEntry}
   class:has-comment={dotInfo.hasComment}
-  class:selected={$selectedWeek &&
-    $selectedWeek.week === weekNumber &&
-    $selectedWeek.year === year}
+  class:selected={$selectedWeek?.week === weekNumber &&
+    $selectedWeek?.year === year}
   style="{dotStyle()} background-color: {dotInfo.color};"
   data-week={weekNumber}
   data-has-entries={dotInfo.hasEntry}
   {role}
   aria-label={ariaLabel}
-  aria-selected={$selectedWeek &&
-    $selectedWeek.week === weekNumber &&
-    $selectedWeek.year === year}
+  aria-selected={$selectedWeek?.week === weekNumber &&
+    $selectedWeek?.year === year}
   on:click
 >
   {#if dotInfo.hasEntry}
-    <svg width="30" height="30" viewBox="0 0 30 30">
+    <svg
+      width={dimensions.DOT_CONTAINER_SIZE}
+      height={dimensions.DOT_CONTAINER_SIZE}
+      viewBox="0 0 {dimensions.DOT_CONTAINER_SIZE} {dimensions.DOT_CONTAINER_SIZE}"
+    >
       <g fill={dotInfo.dotColor} opacity="0.75">
         {#each dotInfo.dots as dot}
           <circle cx={dot.x} cy={dot.y} r={dot.size / 2} />
@@ -123,14 +161,22 @@
 </div>
 
 <style>
+  :root {
+    --dot-size: 30px;
+    --dot-indicator-size: 8px;
+    --dot-indicator-offset: 3px;
+    --transition-duration: 0.5s;
+    --hover-scale: 1.2;
+  }
+
   .dot {
     position: absolute;
     top: 0;
     left: 0;
-    width: 30px;
-    height: 30px;
+    width: var(--dot-size);
+    height: var(--dot-size);
     border-radius: 50%;
-    transition: all 0.5s ease;
+    transition: all var(--transition-duration) ease;
     transform: translate(var(--x, 0), var(--y, 0));
     animation: float 3s ease-in-out infinite;
     cursor: default;
@@ -147,10 +193,10 @@
   .dot.has-entries.has-comment::after {
     content: "";
     position: absolute;
-    top: 3px;
-    right: 3px;
-    width: 8px;
-    height: 8px;
+    top: var(--dot-indicator-offset);
+    right: var(--dot-indicator-offset);
+    width: var(--dot-indicator-size);
+    height: var(--dot-indicator-size);
     border-radius: 50%;
     background-color: var(--bg-color);
     opacity: 1;
@@ -169,7 +215,6 @@
     z-index: 1;
   }
 
-  /* Add these new styles from Calendar.svelte */
   :global(.grid:not(.expanded)) .dot.has-entries.has-comment::after {
     display: none;
   }
@@ -183,7 +228,7 @@
   }
 
   :global(.grid.fully-expanded) .dot:hover {
-    transform: translate(var(--x, 0), var(--y, 0)) scale(1.2);
+    transform: translate(var(--x, 0), var(--y, 0)) scale(var(--hover-scale));
     z-index: 2;
   }
 </style>

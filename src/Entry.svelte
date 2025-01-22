@@ -16,14 +16,6 @@
   $: textColor = colorPalette[side];
   $: bgColor = colorPalette[location];
 
-  // Date formatting options
-  const shortDateOptions = {
-    weekday: "short",
-    month: "numeric",
-    day: "numeric",
-    year: "2-digit",
-  } as const;
-
   // Width handling
   function checkWidth() {
     if (dateContainer) {
