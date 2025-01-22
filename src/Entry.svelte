@@ -4,7 +4,6 @@
   export let date;
   export let site;
   export let comment;
-  export let transformValue;
 
   let dateContainer;
   let useLongDate = false;
@@ -35,10 +34,7 @@
   });
 </script>
 
-<div
-  class="entry"
-  style="transform: {transformValue({ date, site, comment })};"
->
+<div class="entry">
   <div class="entry-header">
     <div class="date" bind:this={dateContainer}>
       <div class="star-container">
@@ -88,12 +84,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transform-origin: top center;
-    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
     width: 75%;
-    /* Default width for large screens */
     min-width: min-content;
-    /* Prevents squashing below content minimum width */
   }
 
   .entry-header {

@@ -19,11 +19,6 @@
 
   let entries: { date: Date; site: string; comment: string }[] = [];
   let loading = true; // Add loading state
-  let scrollDelta = 0; // Accumulate scroll delta
-  const SCROLL_THRESHOLD = 400; // Define a threshold for scroll
-  let isScrolling = false;
-  let lastChangeWasScroll = false;
-  let wheelTimeout;
 
   onMount(async () => {
     try {
@@ -108,33 +103,6 @@
     });
   }
 
-  $: transformValue = (entry) => {
-    let scrollAmount = -(scrollDelta / SCROLL_THRESHOLD) * 20;
-
-    // Check if we're at boundaries
-    const isAtFirst =
-      $selectedWeek.year === entries[0].date.getFullYear() &&
-      $selectedWeek.week === getWeekNumber(entries[0].date);
-    const isAtLast =
-      $selectedWeek.year === entries[entries.length - 1].date.getFullYear() &&
-      $selectedWeek.week === getWeekNumber(entries[entries.length - 1].date);
-
-    // Apply exponential dampening at boundaries
-    if (isAtFirst && scrollDelta < 0) {
-      scrollAmount = -(Math.abs(scrollDelta / SCROLL_THRESHOLD) ** 0.5) * 10;
-    } else if (isAtLast && scrollDelta > 0) {
-      scrollAmount = Math.abs(scrollDelta / SCROLL_THRESHOLD) ** 0.5 * 10;
-    }
-
-    return `translateY(${scrollAmount}px)`;
-  };
-
-  function handleCalendarClick() {
-    lastChangeWasScroll = false;
-    isScrolling = false;
-    clearTimeout(wheelTimeout);
-  }
-
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -196,7 +164,7 @@
       </button>
       {#if !loading}
         {#each [2025, 2024, 2023] as year}
-          <Calendar {year} {entries} on:click={handleCalendarClick} />
+          <Calendar {year} {entries} />
         {/each}
       {/if}
     </div>
@@ -209,26 +177,14 @@
       {:else}
         <div class="entry-container">
           {#each filteredEntries as entry (entry.date.getTime())}
-            <div class:no-transition={isScrolling}>
-              {#if !lastChangeWasScroll}
-                <div in:fade={{ duration: 300 }}>
-                  <Entry
-                    date={entry.date}
-                    site={entry.site}
-                    comment={entry.comment}
-                    {transformValue}
-                    on:click={handleCalendarClick}
-                  />
-                </div>
-              {:else}
+            <div>
+              <div in:fade={{ duration: 300 }}>
                 <Entry
                   date={entry.date}
                   site={entry.site}
                   comment={entry.comment}
-                  {transformValue}
-                  on:click={handleCalendarClick}
                 />
-              {/if}
+              </div>
             </div>
           {/each}
         </div>
