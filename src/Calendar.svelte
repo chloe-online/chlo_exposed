@@ -7,7 +7,8 @@
 </script>
 
 <script lang="ts">
-  import { selectedWeek, showAbout, isCalendarVisible } from "./stores";
+  import { showAbout, isCalendarVisible } from "./stores";
+  import { selectedWeek } from "./lib/entries";
   import { getWeekNumber } from "./utils";
   import Dot from "./Dot.svelte";
 

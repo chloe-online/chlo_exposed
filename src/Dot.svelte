@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { selectedWeek } from "./stores";
+  import { selectedWeek } from "./lib/entries";
   import { getWeekNumber } from "./utils";
   import { colorPalette } from "./constants";
   import type { CalendarEntry } from "./Calendar.svelte";

@@ -1,160 +1,48 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import Calendar from "./Calendar.svelte";
-  import { selectedWeek, isCalendarVisible } from "./stores.ts";
-  import { getWeekNumber, parseDiaryEntries } from "./utils.ts";
-  import Entry from "./Entry.svelte"; // Import the Entry component
   import { fade } from "svelte/transition";
+  import {
+    entries,
+    selectedWeek,
+    isLoading,
+    filteredEntries,
+    loadEntries,
+    navigateWeek,
+  } from "./lib/entries";
+  import { showAbout, isCalendarVisible } from "./stores";
+
+  // Components
+  import Calendar from "./Calendar.svelte";
+  import Entry from "./Entry.svelte";
   import About from "./About.svelte";
-  import { showAbout } from "./stores.ts";
+
+  // Handle keyboard navigation
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === "ArrowUp") navigateWeek("next");
+    else if (event.key === "ArrowDown") navigateWeek("previous");
+  }
 
   function handleAboutClick() {
     $showAbout = true;
     $isCalendarVisible = false;
   }
 
-  function closeAbout() {
-    $showAbout = false;
-  }
-
-  let entries: { date: Date; site: string; comment: string }[] = [];
-  let loading = true; // Add loading state
-
   onMount(async () => {
-    try {
-      const diaryText = await fetch("/InjectionDiary.txt").then((r) =>
-        r.text()
-      );
-      entries = await parseDiaryEntries(diaryText);
-
-      // Sort entries in descending order (newest first)
-      entries.sort((a, b) => b.date - a.date);
-
-      // Set the initial selected week to the latest entry's week
-      if (entries.length > 0) {
-        const latestEntry = entries[0]; // Now the first entry is the latest
-        const week = getWeekNumber(latestEntry.date);
-        selectedWeek.set({
-          week: week,
-          year: latestEntry.date.getFullYear(),
-        });
-      }
-    } finally {
-      loading = false;
-    }
-  });
-
-  function handleKeyDown(event) {
-    if (!$selectedWeek || entries.length === 0) return;
-
-    let { week, year } = $selectedWeek;
-
-    // Determine the first and last weeks in the entries
-    const firstEntry = entries[entries.length - 1];
-    const lastEntry = entries[0];
-    const firstWeek = getWeekNumber(firstEntry.date);
-    const firstYear = firstEntry.date.getFullYear();
-    const lastWeek = getWeekNumber(lastEntry.date);
-    const lastYear = lastEntry.date.getFullYear();
-
-    if (event.key === "ArrowUp") {
-      $showAbout = false;
-      do {
-        week += 1;
-        if (week > 52) {
-          week = 1;
-          year += 1;
-        }
-        // Stop if we're at the last available week
-        if (year > lastYear || (year === lastYear && week > lastWeek)) {
-          return;
-        }
-      } while (
-        !entries.some((entry) => {
-          const entryWeek = getWeekNumber(entry.date);
-          const entryYear = entry.date.getFullYear();
-          return entryWeek === week && entryYear === year;
-        })
-      );
-    } else if (event.key === "ArrowDown") {
-      $showAbout = false;
-      do {
-        week -= 1;
-        if (week < 1) {
-          week = 52;
-          year -= 1;
-        }
-        // Stop if we're at the first available week
-        if (year < firstYear || (year === firstYear && week < firstWeek)) {
-          return;
-        }
-      } while (
-        !entries.some((entry) => {
-          const entryWeek = getWeekNumber(entry.date);
-          const entryYear = entry.date.getFullYear();
-          return entryWeek === week && entryYear === year;
-        })
-      );
-    }
-
-    selectedWeek.set({
-      year,
-      week,
-    });
-  }
-
-  onMount(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      clearTimeout(wheelTimeout);
-    };
-  });
-
-  $: filteredEntries = $selectedWeek
-    ? entries.filter((entry) => {
-        const entryWeek = getWeekNumber(entry.date);
-        const entryYear = entry.date.getFullYear();
-        return (
-          entryWeek === $selectedWeek.week && entryYear === $selectedWeek.year
-        );
-      })
-    : entries;
-
-  function handleSwipe(event) {
-    const touch = event.changedTouches[0];
-    const swipeDistance = touch.clientX - touchStartX;
-
-    if (swipeDistance < -50) {
-      // Swipe left
-      $isCalendarVisible = false;
-    } else if (swipeDistance > 50) {
-      // Swipe right
-      $isCalendarVisible = true;
-    }
-  }
-
-  let touchStartX = 0;
-
-  function handleTouchStart(event) {
-    touchStartX = event.touches[0].clientX;
-  }
-
-  onMount(() => {
-    const container = document.querySelector(".container");
-    container.addEventListener("touchstart", handleTouchStart);
-    container.addEventListener("touchend", handleSwipe);
-
-    return () => {
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchend", handleSwipe);
-    };
+    await loadEntries();
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
   });
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
+
 <main>
   <div class="container">
-    <div class="calendar-container {$isCalendarVisible ? 'visible' : 'hidden'}">
+    <div
+      class="calendar-container"
+      class:visible={$isCalendarVisible}
+      class:hidden={!$isCalendarVisible}
+    >
       <button
         class="about-button"
         on:click={handleAboutClick}
@@ -162,29 +50,28 @@
       >
         About
       </button>
-      {#if !loading}
+
+      {#if !$isLoading}
         {#each [2025, 2024, 2023] as year}
-          <Calendar {year} {entries} />
+          <Calendar {year} entries={$entries} />
         {/each}
       {/if}
     </div>
 
-    <div class="content {$isCalendarVisible ? 'hidden' : 'visible'}">
+    <div
+      class="content"
+      class:visible={!$isCalendarVisible}
+      class:hidden={$isCalendarVisible}
+    >
       {#if $showAbout}
         <div class="about-container">
           <About />
         </div>
       {:else}
         <div class="entry-container">
-          {#each filteredEntries as entry (entry.date.getTime())}
-            <div>
-              <div in:fade={{ duration: 300 }}>
-                <Entry
-                  date={entry.date}
-                  site={entry.site}
-                  comment={entry.comment}
-                />
-              </div>
+          {#each $filteredEntries as entry (entry.date.getTime())}
+            <div in:fade={{ duration: 300 }}>
+              <Entry {...entry} />
             </div>
           {/each}
         </div>
@@ -231,8 +118,6 @@
     padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
-    width: 100%;
-    height: 100%;
     overflow: hidden;
   }
 
