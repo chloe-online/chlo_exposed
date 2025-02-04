@@ -9,7 +9,7 @@
 <script lang="ts">
   import { showAbout, isCalendarVisible } from "./stores";
   import { selectedWeek } from "./lib/entries";
-  import { getWeekNumber } from "./utils";
+  import { getWeekNumber } from "./lib/utils";
   import Dot from "./Dot.svelte";
 
   export let year: number;

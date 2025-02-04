@@ -1,6 +1,6 @@
 import { writable, derived, get } from "svelte/store";
 import type { DiaryEntry, WeekSelection } from "../types.ts";
-import { getWeekNumber, parseDiaryEntries } from "../utils.ts";
+import { getWeekNumber, parseDiaryEntries } from "./utils.ts";
 
 // Stores
 export const entries = writable<DiaryEntry[]>([]);
@@ -50,8 +50,6 @@ export async function loadEntries() {
 // Navigation functions
 export function navigateWeek(direction: "next" | "previous") {
   selectedWeek.update(($selectedWeek) => {
-    if (!$selectedWeek) return null;
-
     let { week, year } = $selectedWeek;
 
     // Get the current entries value using get
