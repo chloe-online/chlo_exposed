@@ -3,18 +3,18 @@
   import { colorPalette } from "./constants";
 
   // Props
-  export let date: Date;
-  export let site: string;
-  export let comment: string;
+  let { date, site, comment }: { date: Date; site: string; comment: string } =
+    $props();
 
   // DOM references
   let dateContainer: HTMLDivElement;
 
-  // Reactive variables
-  let useLongDate = false;
-  $: [location, side] = site.split(" ");
-  $: textColor = colorPalette[side];
-  $: bgColor = colorPalette[location];
+  // State and derived values
+  let useLongDate = $state(false);
+  let location = $derived(site.split(" ")[0]);
+  let side = $derived(site.split(" ")[1]);
+  let textColor = $derived(colorPalette[side]);
+  let bgColor = $derived(colorPalette[location]);
 
   // Width handling
   function checkWidth() {

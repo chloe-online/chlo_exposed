@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { selectedWeek } from "./lib/entries";
+  import { store } from "./lib/entries.svelte";
   import { getWeekNumber } from "./lib/utils";
   import { colorPalette } from "./constants";
   import type { CalendarEntry } from "./Calendar.svelte";
@@ -28,14 +28,25 @@
   }
 
   // Props
-  export let weekNumber: number;
-  export let year: number;
-  export let isGridHovered: boolean;
-  export let isFullyExpanded: boolean;
-  export let entries: CalendarEntry[];
-  export let position: { col: number; row: number };
-  export let role: string | undefined = undefined;
-  export let ariaLabel: string | undefined = undefined;
+  let {
+    weekNumber,
+    year,
+    isGridHovered,
+    isFullyExpanded,
+    entries,
+    position,
+    role,
+    ariaLabel,
+  }: {
+    weekNumber: number;
+    year: number;
+    isGridHovered: boolean;
+    isFullyExpanded: boolean;
+    entries: CalendarEntry[];
+    position: { col: number; row: number };
+    role: string | undefined;
+    ariaLabel: string | undefined;
+  } = $props();
 
   // Constants
   const dimensions: DotDimensions = {
@@ -77,16 +88,18 @@
     return distances[date.getDay()];
   };
 
-  // Reactive declarations
-  $: entriesForWeek = entries.filter((entry) => {
-    if (!entry?.date) return false;
-    return (
-      getWeekNumber(entry.date) === weekNumber &&
-      entry.date.getFullYear() === year
-    );
-  });
+  // Convert reactive declarations to $derived
+  const entriesForWeek = $derived(
+    entries.filter((entry) => {
+      if (!entry?.date) return false;
+      return (
+        getWeekNumber(entry.date) === weekNumber &&
+        entry.date.getFullYear() === year
+      );
+    })
+  );
 
-  $: dotInfo = computeDotInfo(entriesForWeek);
+  const dotInfo = $derived(computeDotInfo(entriesForWeek));
 
   function computeDotInfo(entries: CalendarEntry[]): DotInfo {
     if (entries.length === 0) {
@@ -118,7 +131,7 @@
     };
   }
 
-  $: dotStyle = () => {
+  const dotStyle = $derived(() => {
     const x = isGridHovered
       ? position.col * (dimensions.DOT_CONTAINER_SIZE + dimensions.DOT_GAP)
       : 0;
@@ -126,7 +139,7 @@
       ? position.row * (dimensions.DOT_CONTAINER_SIZE + dimensions.DOT_GAP)
       : 0;
     return `--x: ${x}px; --y: ${y}px;`;
-  };
+  });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -134,15 +147,15 @@
   class="dot"
   class:has-entries={dotInfo.hasEntry}
   class:has-comment={dotInfo.hasComment}
-  class:selected={$selectedWeek?.week === weekNumber &&
-    $selectedWeek?.year === year}
-  style="{dotStyle()} background-color: {dotInfo.color};"
+  class:selected={store.selectedWeek.week === weekNumber &&
+    store.selectedWeek.year === year}
+  style="{dotStyle} background-color: {dotInfo.color};"
   data-week={weekNumber}
   data-has-entries={dotInfo.hasEntry}
   {role}
   aria-label={ariaLabel}
-  aria-selected={$selectedWeek?.week === weekNumber &&
-    $selectedWeek?.year === year}
+  aria-selected={store.selectedWeek.week === weekNumber &&
+    store.selectedWeek.year === year}
   on:click
 >
   {#if dotInfo.hasEntry}

@@ -7,13 +7,13 @@
 </script>
 
 <script lang="ts">
-  import { showAbout, isCalendarVisible } from "./stores";
-  import { selectedWeek } from "./lib/entries";
+  import { appState } from "./state.svelte";
+  import { store } from "./lib/entries.svelte";
   import { getWeekNumber } from "./lib/utils";
   import Dot from "./Dot.svelte";
 
-  export let year: number;
-  export let entries: CalendarEntry[];
+  // Props
+  let { year, entries }: { year: number; entries: CalendarEntry[] } = $props();
 
   // Constants
   const GRID_SIZE = 7;
@@ -21,8 +21,8 @@
   const EXPANSION_DELAY_MS = 500;
 
   // State
-  let isGridHovered = false;
-  let isFullyExpanded = false;
+  let isGridHovered = $state(false);
+  let isFullyExpanded = $state(false);
 
   // Grid generation
   const grid = Array.from({ length: GRID_WEEKS }, (_, index) => ({
@@ -42,9 +42,9 @@
     );
 
     if (isFullyExpanded && hasEntry) {
-      $selectedWeek = { year, week: weekNumber };
-      $showAbout = false;
-      $isCalendarVisible = false;
+      store.selectedWeek = { year, week: weekNumber };
+      appState.showAbout = false;
+      appState.isCalendarVisible = false;
     }
   }
 

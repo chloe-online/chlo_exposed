@@ -1,35 +1,42 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-  import {
-    entries,
-    selectedWeek,
-    isLoading,
-    filteredEntries,
-    loadEntries,
-    navigateWeek,
-  } from "./lib/entries";
-  import { showAbout, isCalendarVisible } from "./stores";
+  import { store, loadEntries, navigateWeek } from "./lib/entries.svelte";
+  import { getWeekNumber } from "./lib/utils";
+  // import { showAbout, isCalendarVisible } from "./stores";
+  import { appState } from "./state.svelte";
 
   // Components
   import Calendar from "./Calendar.svelte";
   import Entry from "./Entry.svelte";
   import About from "./About.svelte";
 
+  const filteredEntries = $derived(() => {
+    if (!store.selectedWeek) return store.entries;
+    return store.entries.filter((entry) => {
+      const entryWeek = getWeekNumber(entry.date);
+      const entryYear = entry.date.getFullYear();
+      return (
+        entryWeek === store.selectedWeek.week &&
+        entryYear === store.selectedWeek.year
+      );
+    });
+  });
+
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === "ArrowUp") {
-      $showAbout = false;
+      appState.showAbout = false;
       navigateWeek("next");
     } else if (event.key === "ArrowDown") {
-      $showAbout = false;
+      appState.showAbout = false;
       navigateWeek("previous");
     }
   }
 
   function handleAboutClick() {
-    $showAbout = true;
-    $isCalendarVisible = false;
+    appState.showAbout = true;
+    appState.isCalendarVisible = false;
   }
 
   onMount(async () => {
@@ -47,10 +54,10 @@
     const swipeDistance = touch.clientX - touchStartX;
     if (swipeDistance < -50) {
       // Swipe left
-      $isCalendarVisible = false;
+      appState.isCalendarVisible = false;
     } else if (swipeDistance > 50) {
       // Swipe right
-      $isCalendarVisible = true;
+      appState.isCalendarVisible = true;
     }
   }
 
@@ -76,36 +83,36 @@
   <div class="container">
     <div
       class="calendar-container"
-      class:visible={$isCalendarVisible}
-      class:hidden={!$isCalendarVisible}
+      class:visible={appState.isCalendarVisible}
+      class:hidden={!appState.isCalendarVisible}
     >
       <button
         class="about-button"
         on:click={handleAboutClick}
-        disabled={$showAbout}
+        disabled={appState.showAbout}
       >
         About
       </button>
 
-      {#if !$isLoading}
+      {#if !store.isLoading}
         {#each [2025, 2024, 2023] as year}
-          <Calendar {year} entries={$entries} />
+          <Calendar {year} entries={filteredEntries()} />
         {/each}
       {/if}
     </div>
 
     <div
       class="content"
-      class:visible={!$isCalendarVisible}
-      class:hidden={$isCalendarVisible}
+      class:visible={!appState.isCalendarVisible}
+      class:hidden={appState.isCalendarVisible}
     >
-      {#if $showAbout}
+      {#if appState.showAbout}
         <div class="about-container">
           <About />
         </div>
       {:else}
         <div class="entry-container">
-          {#each $filteredEntries as entry (entry.date.getTime())}
+          {#each filteredEntries() as entry (entry.date.getTime())}
             <div in:fade={{ duration: 300 }}>
               <Entry {...entry} />
             </div>
