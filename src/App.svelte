@@ -32,6 +32,37 @@
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
   });
+
+  // Swipe gestures
+
+  let touchStartX = 0;
+
+  function handleSwipe(event: TouchEvent) {
+    const touch = event.changedTouches[0];
+    const swipeDistance = touch.clientX - touchStartX;
+    if (swipeDistance < -50) {
+      // Swipe left
+      $isCalendarVisible = false;
+    } else if (swipeDistance > 50) {
+      // Swipe right
+      $isCalendarVisible = true;
+    }
+  }
+
+  function handleTouchStart(event: TouchEvent) {
+    touchStartX = event.touches[0].clientX;
+  }
+
+  onMount(() => {
+    const container = document.querySelector(".container");
+    if (!container) return;
+    container.addEventListener("touchstart", handleTouchStart);
+    container.addEventListener("touchend", handleSwipe);
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchend", handleSwipe);
+    };
+  });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
