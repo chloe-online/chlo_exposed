@@ -18,8 +18,13 @@
 
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "ArrowUp") navigateWeek("next");
-    else if (event.key === "ArrowDown") navigateWeek("previous");
+    if (event.key === "ArrowUp") {
+      $showAbout = false;
+      navigateWeek("next");
+    } else if (event.key === "ArrowDown") {
+      $showAbout = false;
+      navigateWeek("previous");
+    }
   }
 
   function handleAboutClick() {
