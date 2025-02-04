@@ -2,7 +2,7 @@
   import { store } from "./lib/entries.svelte";
   import { getWeekNumber } from "./lib/utils";
   import { colorPalette } from "./constants";
-  import type { CalendarEntry } from "./Calendar.svelte";
+  import type { DiaryEntry } from "./types";
 
   // Types
   interface DotDimensions {
@@ -42,7 +42,7 @@
     year: number;
     isGridHovered: boolean;
     isFullyExpanded: boolean;
-    entries: CalendarEntry[];
+    entries: DiaryEntry[];
     position: { col: number; row: number };
     role: string | undefined;
     ariaLabel: string | undefined;
@@ -101,7 +101,7 @@
 
   const dotInfo = $derived(computeDotInfo(entriesForWeek));
 
-  function computeDotInfo(entries: CalendarEntry[]): DotInfo {
+  function computeDotInfo(entries: DiaryEntry[]): DotInfo {
     if (entries.length === 0) {
       return {
         hasEntry: false,

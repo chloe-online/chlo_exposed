@@ -1,19 +1,14 @@
-<script context="module" lang="ts">
-  export interface CalendarEntry {
-    date: Date;
-    site: string;
-    comment: string;
-  }
-</script>
-
 <script lang="ts">
   import { appState } from "./state.svelte";
   import { store } from "./lib/entries.svelte";
   import { getWeekNumber } from "./lib/utils";
+  import type { DiaryEntry } from "./types";
+
+  // Components
   import Dot from "./Dot.svelte";
 
   // Props
-  let { year, entries }: { year: number; entries: CalendarEntry[] } = $props();
+  let { year, entries }: { year: number; entries: DiaryEntry[] } = $props();
 
   // Constants
   const GRID_SIZE = 7;

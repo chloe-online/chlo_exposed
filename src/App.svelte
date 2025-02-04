@@ -1,27 +1,27 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-  import { store, loadEntries, navigateWeek } from "./lib/entries.svelte";
   import { getWeekNumber } from "./lib/utils";
-  // import { showAbout, isCalendarVisible } from "./stores";
   import { appState } from "./state.svelte";
+  import { store, loadEntries, navigateWeek } from "./lib/entries.svelte";
 
   // Components
   import Calendar from "./Calendar.svelte";
   import Entry from "./Entry.svelte";
   import About from "./About.svelte";
 
-  const filteredEntries = $derived(() => {
-    if (!store.selectedWeek) return store.entries;
-    return store.entries.filter((entry) => {
-      const entryWeek = getWeekNumber(entry.date);
-      const entryYear = entry.date.getFullYear();
-      return (
-        entryWeek === store.selectedWeek.week &&
-        entryYear === store.selectedWeek.year
-      );
-    });
-  });
+  const filteredEntries = $derived(
+    !store.selectedWeek
+      ? store.entries
+      : store.entries.filter((entry) => {
+          const entryWeek = getWeekNumber(entry.date);
+          const entryYear = entry.date.getFullYear();
+          return (
+            entryWeek === store.selectedWeek.week &&
+            entryYear === store.selectedWeek.year
+          );
+        })
+  );
 
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent) {
@@ -96,7 +96,7 @@
 
       {#if !store.isLoading}
         {#each [2025, 2024, 2023] as year}
-          <Calendar {year} entries={filteredEntries()} />
+          <Calendar {year} entries={filteredEntries} />
         {/each}
       {/if}
     </div>
@@ -112,7 +112,7 @@
         </div>
       {:else}
         <div class="entry-container">
-          {#each filteredEntries() as entry (entry.date.getTime())}
+          {#each filteredEntries as entry (entry.date.getTime())}
             <div in:fade={{ duration: 300 }}>
               <Entry {...entry} />
             </div>

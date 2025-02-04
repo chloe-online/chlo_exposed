@@ -27,7 +27,7 @@
     const resizeObserver = new ResizeObserver(checkWidth);
 
     if (dateContainer) {
-      resizeObserver.observe(dateContainer.parentElement);
+      resizeObserver.observe(dateContainer.parentElement as Element);
       checkWidth();
     }
 
