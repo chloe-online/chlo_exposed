@@ -138,18 +138,18 @@
     const y = isGridHovered
       ? position.row * (dimensions.DOT_CONTAINER_SIZE + dimensions.DOT_GAP)
       : 0;
+    console.log(x, y);
     return `--x: ${x}px; --y: ${y}px;`;
   });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="dot"
   class:has-entries={dotInfo.hasEntry}
   class:has-comment={dotInfo.hasComment}
   class:selected={store.selectedWeek.week === weekNumber &&
     store.selectedWeek.year === year}
-  style="{dotStyle} background-color: {dotInfo.color};"
+  style="{dotStyle()} background-color: {dotInfo.color};"
   data-week={weekNumber}
   data-has-entries={dotInfo.hasEntry}
   {role}
