@@ -41,8 +41,6 @@
 
   onMount(async () => {
     await loadEntries();
-    window.addEventListener("keydown", handleKeydown);
-    return () => window.removeEventListener("keydown", handleKeydown);
   });
 
   // Swipe gestures
