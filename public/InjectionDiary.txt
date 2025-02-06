@@ -1,5 +1,9 @@
 <div><b><u><h1>💉</h1></u></b><h1>Injection diary</h1></div>
 <div><br></div>
+<div>2/6/25</div>
+<div>bottom left</div>
+<div>slight burning sensation as the needle exited my muscle, no blood. i am returning to an uneasy sense of normalcy, but many wonderful developments in my personal life. meeting new friends; started learning how to perform my music live, with dreams of playing for an audience; practiced bass; made some fixes to this site including upgrading to svelte 5 (accidentally let the llm write svelte 4 lmao); and continued opening myself to new experiences. love as always.</div>
+<div><br></div>
 <div>1/30/25</div>
 <div>top right</div>
 <div>what is there to say. it feels as though fascism has it's tendrils around the united states and my people are the enemy. i now cannot go into federal bathrooms without the risk of retribution, classrooms, medicine, prisons all pose an increased risk. i'm still going tho, very fortunate to have moved to new york. finding ways to be myself and live my life. trying to become a member of a synth library so i can play analogue synths &lt3</div>
