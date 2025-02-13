@@ -1,5 +1,9 @@
 <div><b><u><h1>💉</h1></u></b><h1>Injection diary</h1></div>
 <div><br></div>
+<div>2/13/25</div>
+<div>bottom right</div>
+<div>went to a dog show and saw lots of family this past week. no revelations, just normal which has not been my standard for the past several months. settling into my new life in the city. feeling an absence of something un-namable…</div>
+<div><br></div>
 <div>2/6/25</div>
 <div>bottom left</div>
 <div>slight burning sensation as the needle exited my muscle, no blood. i am returning to an uneasy sense of normalcy, but many wonderful developments in my personal life. meeting new friends; started learning how to perform my music live, with dreams of playing for an audience; practiced bass; made some fixes to this site including upgrading to svelte 5 (accidentally let the llm write svelte 4 lmao); and continued opening myself to new experiences. love as always.</div>
