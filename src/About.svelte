@@ -88,6 +88,11 @@
     padding-left: 2em;
   }
 
+  .about-content .body hr {
+    width: 100%;
+    border-bottom: 1px solid var(--text-color);
+  }
+
   .about-content h1 {
     font-style: italic;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
