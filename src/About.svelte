@@ -1,4 +1,3 @@
-<!-- About.svelte -->
 <script lang="ts">
   import { colorPalette } from "./constants";
 </script>

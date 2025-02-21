@@ -85,13 +85,7 @@
       class:visible={appState.isCalendarVisible}
       class:hidden={!appState.isCalendarVisible}
     >
-      <button
-        class="about-button"
-        on:click={handleAboutClick}
-        disabled={appState.showAbout}
-      >
-        About
-      </button>
+      <button class="about-button" on:click={handleAboutClick}> About </button>
 
       {#if !store.isLoading}
         {#each [2025, 2024, 2023] as year}
@@ -267,21 +261,23 @@
     cursor: pointer;
     transition: color 0.3s ease;
     background: none;
-    /* Remove background */
     position: absolute;
-    /* Position the button absolutely */
     top: 0;
-    /* Align to the top */
     right: 0;
-    /* Align to the right */
     font-style: italic;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
     font-size: 2em;
     font-weight: 100;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .about-button:hover {
     text-decoration: underline;
+  }
+
+  .about-button:active {
+    opacity: 1;
+    background: none;
   }
 
   .about-container {
