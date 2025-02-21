@@ -90,7 +90,7 @@
 
   .about-content .body hr {
     width: 100%;
-    border-bottom: 1px solid var(--text-color);
+    border-bottom: 0px solid var(--text-color);
   }
 
   .about-content h1 {
