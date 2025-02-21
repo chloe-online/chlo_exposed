@@ -4,6 +4,7 @@
   import { getWeekNumber } from "./lib/utils";
   import { appState } from "./state.svelte";
   import { store, loadEntries, navigateWeek } from "./lib/entries.svelte";
+  import { lastUpdated } from "./lib/stores/meta.svelte";
 
   // Components
   import Calendar from "./Calendar.svelte";
@@ -119,6 +120,13 @@
       {/if}
     </div>
   </div>
+  <footer class="footer">
+    <a href="https://github.com/chloe-online/chlo_exposed" class="source-link">
+      Source
+    </a>
+    <p>|</p>
+    <p>Last updated: {lastUpdated}</p>
+  </footer>
 </main>
 
 <style>
@@ -230,19 +238,12 @@
       justify-content: flex-start;
     }
 
-    .calendar-container {
-      padding-top: 3em;
-      /* Keep the original padding for small screens */
-    }
-
     .content {
-      padding-top: 2em;
-      /* Reset padding on smaller screens */
       margin: 0;
     }
 
     .entry-container {
-      top: 0;
+      top: 33vh; /* Keep the vertical centering */
     }
 
     .about-container {
@@ -339,10 +340,15 @@
     }
 
     .calendar-container {
-      overflow-x: auto;
-      overflow-y: scroll;
-      border-right: none;
-      gap: 2em;
+      padding-top: 3em;
+    }
+
+    .content {
+      padding-top: 2em;
+    }
+
+    .entry-container {
+      top: 0;
     }
 
     .about-container {
@@ -353,13 +359,36 @@
       align-self: flex-start;
     }
 
-    .content {
-      padding: 0;
+    .footer {
+      right: 0;
+      left: 0;
+      justify-content: center;
     }
+  }
 
-    .calendar-container > Calendar {
-      width: 100%;
-      max-width: 400px;
-    }
+  .footer {
+    font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.8em;
+    color: var(--text-color);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .footer > p {
+    opacity: 0.7;
+  }
+
+  .source-link {
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.7;
+  }
+
+  .source-link:hover {
+    text-decoration: underline;
   }
 </style>
