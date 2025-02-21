@@ -128,6 +128,7 @@
     --bg-color: #ffffff;
     --text-color: #333333;
     --accent-color: #333333;
+    --footer-color: #cccccc;
     --square-color: #a89996;
     --selected-color: white;
     --star-color: #ffb511;
@@ -368,7 +369,7 @@
     bottom: 1rem;
     right: 1rem;
     font-size: 0.8em;
-    color: var(--text-color);
+    color: var(--footer-color);
     display: flex;
     gap: 1rem;
     align-items: center;
