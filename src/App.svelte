@@ -376,6 +376,7 @@
 
   .footer > p {
     opacity: 0.7;
+    margin: 0;
   }
 
   .source-link {
