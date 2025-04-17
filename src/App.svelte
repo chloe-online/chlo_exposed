@@ -376,11 +376,18 @@
       position: static;
       padding: 1rem;
       background-color: var(--bg-color);
+      border-top: 1px solid var(--footer-color);
+      flex-shrink: 0;
+      bottom: 0;
+      right: 0;
     }
   }
 
   .footer {
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
     font-size: 0.8em;
     color: var(--footer-color);
     display: flex;
@@ -388,7 +395,6 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    flex-shrink: 0;
   }
 
   .source-link {

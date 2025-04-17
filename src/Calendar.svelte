@@ -98,7 +98,6 @@
     align-items: flex-end;
     gap: 10px;
     width: 100%;
-    padding: 1em;
     font-size: 1.5em;
     color: var(--text-color);
     cursor: default;
@@ -126,8 +125,11 @@
     --gap-size: 5px;
     --grid-columns: 7;
     --grid-rows: 8;
-    min-width: calc(var(--grid-columns) * (var(--dot-size) + var(--gap-size)));
-    min-height: calc(var(--grid-rows) * (var(--dot-size) + var(--gap-size)));
+    width: calc(var(--grid-columns) * (var(--dot-size) + var(--gap-size)));
+    height: calc(var(--grid-rows) * (var(--dot-size) + var(--gap-size)));
+    transition:
+      width 0.5s ease,
+      height 0.5s ease;
   }
 
   .year-display {
