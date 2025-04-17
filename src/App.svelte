@@ -188,6 +188,7 @@
     border-right: 1px solid #333;
     transition: padding-top 0.3s ease-in-out;
     position: relative;
+    gap: 10px;
     /* Add this to position the button */
   }
 
@@ -298,6 +299,7 @@
       width: 100%;
       height: 100%;
       padding: 0;
+      gap: 0;
     }
 
     .calendar-container,
@@ -308,11 +310,14 @@
       align-items: flex-start;
       width: 100%;
       max-width: none;
-      padding: 1em;
+      /* padding: 1em; */
+      padding-top: 0;
+      padding: 0;
       transition: transform 0.3s ease-in-out;
     }
 
     .about-button {
+      padding: 0;
       display: flex;
       position: relative;
       align-self: flex-end;
@@ -334,10 +339,6 @@
       transform: translateX(0);
       overflow-y: scroll;
       flex: 1;
-    }
-
-    .calendar-container {
-      padding-top: 3em;
     }
 
     .content {
@@ -373,6 +374,9 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
   }
 
   .footer > p {

@@ -109,7 +109,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding-bottom: 10px;
   }
 
   .grid {
@@ -123,8 +122,12 @@
   }
 
   .grid.expanded {
-    width: 245px;
-    height: 245px;
+    --dot-size: 30px;
+    --gap-size: 5px;
+    --grid-columns: 7;
+    --grid-rows: 8;
+    min-width: calc(var(--grid-columns) * (var(--dot-size) + var(--gap-size)));
+    min-height: calc(var(--grid-rows) * (var(--dot-size) + var(--gap-size)));
   }
 
   .year-display {

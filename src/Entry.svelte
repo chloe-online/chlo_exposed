@@ -207,8 +207,12 @@
 
   @media (max-width: 768px) {
     .entry-content {
-      padding-left: 1em;
+      padding: 0;
       max-width: 100%;
+    }
+
+    .entry-content p {
+      padding-left: 1em;
     }
   }
 
