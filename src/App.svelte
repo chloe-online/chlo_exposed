@@ -79,48 +79,55 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <main>
-  <div class="container">
-    <div
-      class="calendar-container"
-      class:visible={appState.isCalendarVisible}
-      class:hidden={!appState.isCalendarVisible}
-    >
-      <button class="about-button" on:click={handleAboutClick}> About </button>
+  <div class="app-wrapper">
+    <div class="container">
+      <div
+        class="calendar-container"
+        class:visible={appState.isCalendarVisible}
+        class:hidden={!appState.isCalendarVisible}
+      >
+        <button class="about-button" on:click={handleAboutClick}>
+          About
+        </button>
 
-      {#if !store.isLoading}
-        {#each [2025, 2024, 2023] as year}
-          <Calendar {year} entries={store.entries} />
-        {/each}
-      {/if}
-    </div>
-
-    <div
-      class="content"
-      class:visible={!appState.isCalendarVisible}
-      class:hidden={appState.isCalendarVisible}
-    >
-      {#if appState.showAbout}
-        <div class="about-container">
-          <About />
-        </div>
-      {:else}
-        <div class="entry-container">
-          {#each filteredEntries as entry (entry.date.getTime())}
-            <div in:fade={{ duration: 300 }}>
-              <Entry {...entry} />
-            </div>
+        {#if !store.isLoading}
+          {#each [2025, 2024, 2023] as year}
+            <Calendar {year} entries={store.entries} />
           {/each}
-        </div>
-      {/if}
+        {/if}
+      </div>
+
+      <div
+        class="content"
+        class:visible={!appState.isCalendarVisible}
+        class:hidden={appState.isCalendarVisible}
+      >
+        {#if appState.showAbout}
+          <div class="about-container">
+            <About />
+          </div>
+        {:else}
+          <div class="entry-container">
+            {#each filteredEntries as entry (entry.date.getTime())}
+              <div in:fade={{ duration: 300 }}>
+                <Entry {...entry} />
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </div>
     </div>
+    <footer class="footer">
+      <a
+        href="https://github.com/chloe-online/chlo_exposed"
+        class="source-link"
+      >
+        Source
+      </a>
+      <p>|</p>
+      <p>Last updated: {lastUpdated}</p>
+    </footer>
   </div>
-  <footer class="footer">
-    <a href="https://github.com/chloe-online/chlo_exposed" class="source-link">
-      Source
-    </a>
-    <p>|</p>
-    <p>Last updated: {lastUpdated}</p>
-  </footer>
 </main>
 
 <style>
@@ -165,16 +172,24 @@
     overflow: hidden;
   }
 
+  .app-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+  }
+
   .container {
     display: flex;
     flex-direction: row;
     width: 100%;
     max-width: 1200px;
-    height: 100vh;
+    flex: 1;
     gap: 4em;
     padding: 0 2em;
     margin: 0 auto;
     justify-content: center;
+    overflow: hidden;
   }
 
   .calendar-container {
@@ -297,9 +312,9 @@
       flex-direction: row;
       align-items: flex-start;
       width: 100%;
-      height: 100%;
       padding: 0;
       gap: 0;
+      overflow-y: auto;
     }
 
     .calendar-container,
@@ -358,30 +373,22 @@
     }
 
     .footer {
-      right: 0;
-      left: 0;
-      justify-content: center;
+      position: static;
+      padding: 1rem;
+      background-color: var(--bg-color);
     }
   }
 
   .footer {
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
     font-size: 0.8em;
     color: var(--footer-color);
     display: flex;
     gap: 1rem;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     width: 100%;
-  }
-
-  .footer > p {
-    opacity: 0.7;
-    margin: 0;
+    flex-shrink: 0;
   }
 
   .source-link {
