@@ -210,7 +210,7 @@
   .content {
     flex: 1;
     padding: 2em;
-    padding-top: 33vh;
+    padding-top: 24vh;
     display: flex;
     flex-direction: column;
     min-height: 100%;
@@ -222,12 +222,8 @@
   }
 
   .entry-container {
-    position: absolute;
-    top: 33vh;
-    left: 0;
-    right: 0;
-    bottom: 0;
     display: flex;
+    flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     padding-top: 2em;

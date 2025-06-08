@@ -88,6 +88,9 @@
     align-items: flex-start;
     width: 75%;
     min-width: min-content;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
   }
 
   .entry-header {
@@ -192,6 +195,28 @@
     max-width: 75%;
     overflow-wrap: break-word;
     word-break: break-word;
+    flex: 1;
+    overflow-y: auto;
+    /* Hide scrollbar */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  /* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
+  .entry-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .entry::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, var(--bg-color));
+    pointer-events: none;
+    z-index: 1;
   }
 
   /* Responsive design */
