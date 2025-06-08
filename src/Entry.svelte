@@ -220,6 +220,13 @@
     z-index: 1;
   }
 
+  .historical-event {
+    margin-top: 1em;
+    font-size: 0.9em;
+    font-style: italic;
+    color: var(--text-color-secondary, #666);
+  }
+
   /* Responsive design */
   @media (max-width: 1200px) {
     .entry {
@@ -233,7 +240,7 @@
 
   @media (max-width: 768px) {
     .entry {
-      height: auto; /* Remove fixed height */
+      height: 100%; /* Remove fixed height */
     }
 
     .entry-content {
@@ -250,12 +257,5 @@
     .entry::after {
       display: none;
     }
-  }
-
-  .historical-event {
-    margin-top: 1em;
-    font-size: 0.9em;
-    font-style: italic;
-    color: var(--text-color-secondary, #666);
   }
 </style>
