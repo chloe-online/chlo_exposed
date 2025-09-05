@@ -1,4 +1,5 @@
 #!/bin/bash
+git pull
 open -W "./read_diary.app"
 git add ./public/InjectionDiary.txt
 if ! git diff-index --quiet HEAD --; then
