@@ -91,7 +91,7 @@
         </button>
 
         {#if !store.isLoading}
-          {#each [2025, 2024, 2023] as year}
+          {#each [2026, 2025, 2024, 2023] as year}
             <Calendar {year} entries={store.entries} />
           {/each}
         {/if}
