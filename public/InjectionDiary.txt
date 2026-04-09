@@ -29,14 +29,12 @@
 <div>2/9/26</div>
 <div>middle right</div>
 <div><br></div>
-<div><br></div>
 <div>1/30/26</div>
 <div>middle left</div>
 <div>About to go to the gym and it's early in the morning. Working out regularly has made me feel quite good about my body which is nice.</div>
 <div><br></div>
 <div>1/23/26</div>
 <div>bottom right</div>
-<div><br></div>
 <div><br></div>
 <div>1/16/26</div>
 <div>bottom left</div>
