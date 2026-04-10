@@ -21,7 +21,11 @@
             entryWeek === store.selectedWeek.week &&
             entryYear === store.selectedWeek.year
           );
-        })
+        }),
+  );
+
+  const hasMultipleEntriesInSelectedWeek = $derived(
+    Boolean(store.selectedWeek) && filteredEntries.length > 1,
   );
 
   // Handle keyboard navigation
@@ -107,7 +111,10 @@
             <About />
           </div>
         {:else}
-          <div class="entry-container">
+          <div
+            class="entry-container"
+            class:multi-entry={hasMultipleEntriesInSelectedWeek}
+          >
             {#each filteredEntries as entry (entry.date.getTime())}
               <div in:fade={{ duration: 300 }}>
                 <Entry {...entry} />
@@ -230,6 +237,32 @@
     transition: top 0.3s ease-in-out;
     overflow-y: auto;
     /* Allow vertical scrolling if needed */
+  }
+
+  .entry-container.multi-entry {
+    padding-top: 2em;
+    align-items: stretch;
+    gap: 0.5em;
+  }
+
+  .entry-container.multi-entry > div {
+    display: flex;
+    width: 100%;
+  }
+
+  .entry-container.multi-entry :global(.entry) {
+    margin-bottom: 0;
+    height: auto;
+    min-height: 0;
+  }
+
+  .entry-container.multi-entry :global(.entry .entry-content) {
+    overflow-y: visible;
+    padding-bottom: 0.5em;
+  }
+
+  .entry-container.multi-entry :global(.entry::after) {
+    display: none;
   }
 
   .about-button:disabled:hover {
