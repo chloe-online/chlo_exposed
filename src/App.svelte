@@ -220,7 +220,7 @@
     padding-top: 24vh;
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    min-height: 0;
     position: relative;
     max-width: 700px;
     margin: 0 auto;
@@ -231,8 +231,11 @@
   .entry-container {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     justify-content: flex-start;
     align-items: flex-start;
+    min-height: 0;
+    width: 100%;
     padding-top: 2em;
     transition: top 0.3s ease-in-out;
     overflow-y: auto;
@@ -243,6 +246,8 @@
     padding-top: 2em;
     align-items: stretch;
     gap: 0.5em;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .entry-container.multi-entry > div {
@@ -251,6 +256,7 @@
   }
 
   .entry-container.multi-entry :global(.entry) {
+    flex: 0 0 auto;
     margin-bottom: 0;
     height: auto;
     min-height: 0;
